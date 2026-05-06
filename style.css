@@ -8,9 +8,8 @@ body {
 
 .container {
   width: 100%;
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 40px 20px;
+  padding: 0;
+  margin: 0;
   box-sizing: border-box;
   border: 1px solid red;
 }
@@ -29,8 +28,9 @@ img {
   margin-bottom: 20px;
 }
 
-@media (min-width: 1366px) {
-  img {
-    width: 60%;
+@media (min-width: 1367px) {
+  .container {
+    width: 1000px;
+    margin: 0 auto;
   }
 }
