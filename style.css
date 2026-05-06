@@ -1,0 +1,27 @@
+body {
+  margin: 0;
+  padding: 40px;
+  background: #000;
+  color: #fff;
+  font-family: Consolas, monospace;
+}
+
+a:link,
+a:visited,
+a:hover,
+a:active {
+  color: #ffbb00;
+}
+
+img {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin-bottom: 20px;
+}
+
+@media (min-width: 1366px) {
+  img {
+    width: 60%;
+  }
+}
