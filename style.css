@@ -19,6 +19,7 @@ a:visited,
 a:hover,
 a:active {
   color: #ffbb00;
+  text-decoration: none
 }
 
 img {
