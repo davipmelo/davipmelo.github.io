@@ -26,10 +26,10 @@ img {
   width: 100%;
   height: auto;
   display: block;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 }
 
-@media (min-width: 1367px) {
+@media (min-width: 1366px) {
   .container {
     width: 1000px;
     margin: 0 auto;
