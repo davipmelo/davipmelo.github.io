@@ -13,10 +13,11 @@ body {
 
 .container {
   width: 100%;
-  padding: 0;
+  padding: 20;
   margin: 0;
   box-sizing: border-box;
-  border: 0px solid red;
+  background-color: #ececec;
+  border: 2px solid #d9d9d9;
 }
 
 a:link,
