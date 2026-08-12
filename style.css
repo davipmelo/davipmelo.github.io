@@ -18,8 +18,8 @@ body {
   box-sizing: border-box;
   min-height: calc(100vh);
   background-color: #0D0D0D;
-  border-left: 2px solid #151515;
-  border-right: 2px solid #151515;
+  border-left: 2px solid #252525;
+  border-right: 2px solid #252525;
   border-top: none;
   border-bottom: none;
 }
