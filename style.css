@@ -53,7 +53,7 @@ img {
 /* Cria uma galeria em duas colunas */
 .galeria {
   column-count: 2; /* Divide o conteúdo em 2 colunas */
-  column-gap: 10px; /* Define o espaço entre as colunas */
+  column-gap: 21px; /* Define o espaço entre as colunas */
 }
 
 /* Estilo do banner do header */
