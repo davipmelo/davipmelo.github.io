@@ -6,9 +6,9 @@ const frases = [
   "There's nothing more precious than time.",
   "Virgil Was Here.",
   "The world produces waves. Surf or drown, you decide.",
-  "I did it for me. I liked it. I was good at it. And I was alive.",
+  "I did it for me. I liked it. I was good at it. And... I was alive.",
   "The impossible is possible.",
-  "The future is open source.",
+  "Open source!",
   "Thank you, Virgil.",
   "Wish you were here!",
   "You had to be there!",
@@ -25,6 +25,7 @@ const frases = [
   "Creation over consumption.",
   "When you have the chance, take it. Laugh, sing, dance. Don't allow the night to end...",
   "...But when the time comes, let go. Nothing lasts forever.",
+  "Mamba mentality.",
   "From the underground to the underground, since 2017 'til god knows when."
 ];
 

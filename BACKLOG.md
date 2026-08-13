@@ -16,11 +16,13 @@ IDEIAS
 - O banner ser um vídeo com as letras ransom animadas
 
 IDEIAS DE POST PARA O BLOG
-- Pessoas que me inspiram
+- Pessoas que me inspiram criativamente
 - Quote collection vol. 1
 - Aphex Twin e a vibe half life gaming unreal tournament early internet anos 2000
 - MTG Flavour Text collection vol. 1
 - Uma coleção dos meus mixes favoritos de atmospheric jungle drum n bass
+- A genialidade audiovisual no universo de breaking bad
+- Algo sobre concept arts, art books, e coisas do tipo
 
 ===================================
 
