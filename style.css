@@ -10,6 +10,7 @@
   --bg-container: #0D0D0D;
   --container-border: #252525;
   --link-color: #e1b3ff;
+  --font-family: Helvetica, Arial, sans-serif;
 }
 
 /* HACKERBOY.THEME 
@@ -20,6 +21,7 @@
   --bg-container: #030303;
   --container-border: #00ff00;
   --link-color: #e9bde9;
+  --font-family: Courier-New, monospace;
 }*/
 
 /* =========================
@@ -38,7 +40,7 @@ body {
   padding: 0; /* Define o espaçamento interno padrão */
   background: var(--bg-page); /* Define a cor de fundo geral da página */
   color: var(--text-color); /* Define a cor padrão do texto */
-  font-family: Consolas, monospace; /* Define a fonte padrão do site */
+  font-family: var(--font-family); /* Define a fonte padrão do site */
 }
 
 /* Container principal que segura todo o conteúdo da página */
@@ -99,3 +101,9 @@ img {
     column-count: 1; /* Faz a galeria virar uma coluna só no celular */
   }
 }
+
+p {
+  line-height: 1.5;
+  margin-bottom: 0px;
+}
+
