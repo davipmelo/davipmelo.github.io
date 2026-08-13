@@ -31,7 +31,7 @@ a:link,
 a:visited,
 a:hover,
 a:active {
-  color: #d3a7fc; /* Define a cor dos links */
+  color: #ffbb00; /* Define a cor dos links */
   text-decoration: none; /* Remove o sublinhado padrão dos links */
 }
 
