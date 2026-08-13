@@ -23,6 +23,7 @@ IDEIAS DE POST PARA O BLOG
 - Uma coleção dos meus mixes favoritos de atmospheric jungle drum n bass
 - A genialidade audiovisual no universo de breaking bad
 - Algo sobre concept arts, art books, e coisas do tipo
+- Minhas pinturas favoritas do Simon Stalenhag
 
 ===================================
 
