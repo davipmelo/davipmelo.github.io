@@ -16,7 +16,7 @@ body {
 /* Container principal que segura todo o conteúdo da página */
 .container {
   width: 100%; /* Define a porcentagem que o container vai ocupar da largura disponível (porcentagem da max-width) */
-  max-width: 1200px; /* Limita a largura máxima do container */
+  max-width: 1100px; /* Limita a largura máxima do container */
   min-height: 100vh; /* Faz o container ter pelo menos a altura total da tela */
   margin: 0 auto; /* Centraliza o container horizontalmente */
   padding: 40px; /* Cria uma margem interna em todos os lados */
