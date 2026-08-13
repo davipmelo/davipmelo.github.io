@@ -1,31 +1,3 @@
-/* =========================
-   TEMA DO SITE
-   Deixar só o tema desejado sem comentário e o restante comentado
-========================= */
-
-/* DEFAULT.THEME */
-:root {
-  --bg-page: #030303;
-  --text-color: #ffffff;
-  --bg-container: #0D0D0D;
-  --container-border: #252525;
-  --link-color: #e1b3ff;
-}
-
-/* HACKERBOY.THEME 
-
-:root {
-  --bg-page: #030303;
-  --text-color: #00ff00;
-  --bg-container: #030303;
-  --container-border: #00ff00;
-  --link-color: #e9bde9;
-}*/
-
-/* =========================
-   CONFIGURAÇÕES GERAIS
-========================= */
-
 /* Define margem e espaçamento padrão de todos os títulos */
 h1, h2, h3, h4, h5, h6 {
   margin: 0;
@@ -36,8 +8,8 @@ h1, h2, h3, h4, h5, h6 {
 body {
   margin: 0; /* Define a margem padrão do navegador */
   padding: 0; /* Define o espaçamento interno padrão */
-  background: var(--bg-page); /* Define a cor de fundo geral da página */
-  color: var(--text-color); /* Define a cor padrão do texto */
+  background: #030303; /* Define a cor de fundo geral da página */
+  color: #fff; /* Define a cor padrão do texto */
   font-family: Consolas, monospace; /* Define a fonte padrão do site */
 }
 
@@ -49,9 +21,9 @@ body {
   margin: 0 auto; /* Centraliza o container horizontalmente */
   padding: 40px; /* Cria uma margem interna em todos os lados */
   box-sizing: border-box; /* Faz padding (margem) entrar no cálculo da largura total */
-  background-color: var(--bg-container); /* Define a cor de fundo do container */
-  border-left: 2px solid var(--container-border); /* Adiciona borda lateral esquerda */
-  border-right: 2px solid var(--container-border); /* Adiciona borda lateral direita */
+  background-color: #0D0D0D; /* Define a cor de fundo do container */
+  border-left: 2px solid #252525; /* Adiciona borda lateral esquerda */
+  border-right: 2px solid #252525; /* Adiciona borda lateral direita */
 }
 
 /* Define a aparência dos links em todos os estados */
@@ -59,7 +31,7 @@ a:link,
 a:visited,
 a:hover,
 a:active {
-  color: var(--link-color); /* Define a cor dos links */
+  color: #e1b3ff; /* Define a cor dos links */
   text-decoration: none; /* Remove o sublinhado padrão dos links */
 }
 
