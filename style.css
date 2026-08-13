@@ -70,7 +70,8 @@ img {
   width: 100%; /* Faz a imagem ocupar toda a largura do elemento pai */
   height: auto; /* Mantém a proporção original da imagem */
   display: block; /* Remove espaços indesejados abaixo da imagem */
-  margin-bottom: 21px; /* Adiciona espaço abaixo de cada imagem */
+  margin-bottom: 20px; /* Adiciona espaço abaixo de cada imagem */
+  margin-top: 20px; /* Adiciona espaço acima de cada imagem */
 }
 
 /* Estilo para embeds de vídeo do YouTube */
@@ -82,9 +83,22 @@ img {
 
 /* Cria uma galeria em duas colunas */
 .galeria {
-  column-count: 2; /* Divide o conteúdo em 2 colunas */
-  column-gap: 21px; /* Define o espaço entre as colunas */
+  column-count: 2; /* Divide o conteúdo da galeria em 2 colunas */
+  column-gap: 20px; /* Define 20px de espaço horizontal entre uma coluna e outra */
+  padding-top: 20px; /* Adiciona um respiro de 20px no topo da galeria */
 }
+
+/* Imagens dentro da galeria */
+.galeria img {
+  display: inline-block; /* Faz cada imagem se comportar como bloco dentro do layout em colunas */
+  width: 100%; /* Faz a imagem ocupar toda a largura disponível da coluna */
+  vertical-align: top; /* Alinha o conteúdo pelo topo, ajudando a evitar desalinhamento visual */
+  margin: 0 0 20px 0; /* Adiciona 20px apenas abaixo de cada imagem */
+  break-inside: avoid; /* Evita que a imagem seja quebrada entre colunas */
+  -webkit-column-break-inside: avoid; /* Compatibilidade com navegadores baseados em WebKit */
+  page-break-inside: avoid; /* Compatibilidade extra para evitar quebras em alguns navegadores */
+}
+
 
 /* Estilo do banner do header */
 .logo-header {
@@ -92,7 +106,7 @@ img {
   max-width: 750px; /* Limita a largura máxima da imagem */
   height: auto; /* Mantém a proporção original da imagem */
   display: block; /* Faz a imagem se comportar como bloco */
-  margin: 0 auto 21px; /* Centraliza a imagem e adiciona espaço abaixo dela */
+  margin: 0 auto 20px; /* Centraliza a imagem e adiciona espaço abaixo dela */
 }
 
 /* Ajuste para telas menores, como celulares */
