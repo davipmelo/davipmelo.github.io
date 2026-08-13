@@ -3,16 +3,16 @@
    Deixar só o tema desejado sem comentário e o restante comentado
 ========================= */
 
-/* DEFAULT.THEME */
+/* DEFAULT.THEME 
 :root {
   --bg-page: #030303;
   --text-color: #ffffff;
   --bg-container: #0D0D0D;
   --container-border: #252525;
   --link-color: #e1b3ff;
-}
+}*/
 
-/* HACKERBOY.THEME 
+/* HACKERBOY.THEME */
 
 :root {
   --bg-page: #030303;
@@ -20,7 +20,7 @@
   --bg-container: #030303;
   --container-border: #00ff00;
   --link-color: #e9bde9;
-}*/
+}
 
 /* =========================
    CONFIGURAÇÕES GERAIS
