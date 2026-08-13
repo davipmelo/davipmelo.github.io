@@ -23,8 +23,8 @@ const frases = [
   "Good for health, bad for education!",
   "Blink and you'll miss it.",
   "Creation over consumption.",
-  "You can only trust yourself and the BLINK™ R&D team.",
-  "You can only trust yourself and the BLINK™ R&D team.",
+  "When you have the chance, take it. Laugh, sing, dance. Don't allow the night to end...",
+  "...But when the time comes, let go. Nothing lasts forever.",
   "From the underground to the underground, since 2017 'til god knows when."
 ];
 
