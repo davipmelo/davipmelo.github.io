@@ -11,6 +11,12 @@
   --container-border: #252525;
   --link-color: #e1b3ff;
   --font-family: Helvetica, Arial, sans-serif;
+  /* Esses ajustes --frase são referentes à frase aleatória do header */
+  --frase-tamanho: 16px;
+  --frase-cor: #6e6d6e;
+  --frase-espacamento-linhas: 1.4;
+  --frase-margem-superior: 0px;
+  --frase-margem-inferior: 20px;
 }
 
 /* HACKERBOY.THEME 
@@ -22,6 +28,11 @@
   --container-border: #00ff00;
   --link-color: #00ff00;
   --font-family: Courier-New, monospace;
+  --frase-tamanho: 16px;
+  --frase-cor: #6e6d6e;
+  --frase-espacamento-linhas: 1.4;
+  --frase-margem-superior: 0px;
+  --frase-margem-inferior: 20px;
 }*/
 
 /* =========================
@@ -106,7 +117,7 @@ img {
   max-width: 750px; /* Limita a largura máxima da imagem */
   height: auto; /* Mantém a proporção original da imagem */
   display: block; /* Faz a imagem se comportar como bloco */
-  margin: 0 auto 20px; /* Centraliza a imagem e adiciona espaço abaixo dela */
+  margin: 0 auto 5px; /* Centraliza a imagem e adiciona espaço abaixo dela */
 }
 
 /* Ajuste para telas menores, como celulares */
@@ -124,3 +135,12 @@ p {
   margin-bottom: 0px;
 }
 
+/* Frase aleatória abaixo do banner */
+#frase-header {
+  margin: var(--frase-margem-superior) 0 var(--frase-margem-inferior);
+  color: var(--frase-cor);
+  font-size: var(--frase-tamanho);
+  line-height: var(--frase-espacamento-linhas);
+  font-style: italic;
+  text-align: center;
+}
