@@ -1,4 +1,4 @@
-/* Remove margem e espaçamento padrão de todos os títulos */
+/* Define margem e espaçamento padrão de todos os títulos */
 h1, h2, h3, h4, h5, h6 {
   margin: 0;
   padding: 0;
@@ -6,21 +6,21 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Define o estilo geral da página */
 body {
-  margin: 0; /* Remove a margem padrão do navegador */
-  padding: 0; /* Remove o espaçamento interno padrão */
+  margin: 0; /* Define a margem padrão do navegador */
+  padding: 0; /* Define o espaçamento interno padrão */
   background: #030303; /* Define a cor de fundo geral da página */
-  color: #fff; /* Define a cor padrão do texto como branco */
+  color: #fff; /* Define a cor padrão do texto */
   font-family: Consolas, monospace; /* Define a fonte padrão do site */
 }
 
 /* Container principal que segura todo o conteúdo da página */
 .container {
-  width: 100%; /* Faz o container ocupar toda a largura disponível */
+  width: 100%; /* Define a porcentagem que o container vai ocupar da largura disponível (porcentagem da max-width) */
   max-width: 1200px; /* Limita a largura máxima do container */
   min-height: 100vh; /* Faz o container ter pelo menos a altura total da tela */
   margin: 0 auto; /* Centraliza o container horizontalmente */
-  padding: 40px; /* Cria espaço interno em todos os lados */
-  box-sizing: border-box; /* Faz padding entrar no cálculo da largura total */
+  padding: 40px; /* Cria uma margem interna em todos os lados */
+  box-sizing: border-box; /* Faz padding (margem) entrar no cálculo da largura total */
   background-color: #0D0D0D; /* Define a cor de fundo do container */
   border-left: 2px solid #252525; /* Adiciona borda lateral esquerda */
   border-right: 2px solid #252525; /* Adiciona borda lateral direita */
@@ -53,16 +53,16 @@ img {
 /* Cria uma galeria em duas colunas */
 .galeria {
   column-count: 2; /* Divide o conteúdo em 2 colunas */
-  column-gap: 21px; /* Define o espaço entre as colunas */
+  column-gap: 10px; /* Define o espaço entre as colunas */
 }
 
-/* Estilo da imagem do header/logo */
+/* Estilo do banner do header */
 .logo-header {
   width: 100%; /* Permite que a imagem se ajuste ao espaço disponível */
-  max-width: 750px; /* Limita a largura máxima da imagem a 750px */
+  max-width: 750px; /* Limita a largura máxima da imagem */
   height: auto; /* Mantém a proporção original da imagem */
   display: block; /* Faz a imagem se comportar como bloco */
-  margin: 0 auto 21px; /* Centraliza a imagem e adiciona espaço abaixo */
+  margin: 0 auto 21px; /* Centraliza a imagem e adiciona espaço abaixo dela */
 }
 
 /* Ajuste para telas menores, como celulares */
