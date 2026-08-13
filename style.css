@@ -6,7 +6,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Define o estilo geral da página */
 body {
-  margin: 100; /* Define a margem padrão do navegador */
+  margin: 0; /* Define a margem padrão do navegador */
   padding: 0; /* Define o espaçamento interno padrão */
   background: #030303; /* Define a cor de fundo geral da página */
   color: #fff; /* Define a cor padrão do texto */
