@@ -20,7 +20,7 @@
   --text-color: #00ff00;
   --bg-container: #030303;
   --container-border: #00ff00;
-  --link-color: #e9bde9;
+  --link-color: #00ff00;
   --font-family: Courier-New, monospace;
 }*/
 
@@ -113,6 +113,9 @@ img {
 @media (max-width: 768px) {
   .galeria {
     column-count: 1; /* Faz a galeria virar uma coluna só no celular */
+  }
+  .container {
+    padding: 20px; /* Reduz o padding do container em telas menores */
   }
 }
 

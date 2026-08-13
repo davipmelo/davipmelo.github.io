@@ -70,7 +70,4 @@ img {
   .galeria {
     column-count: 1; /* Faz a galeria virar uma coluna só no celular */
   }
-  .container {
-    padding: 20px; /* Reduz o padding do container em telas menores */
-  }
 }
