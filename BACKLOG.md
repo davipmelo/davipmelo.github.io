@@ -10,9 +10,9 @@ TO DO
 - Adicionar página "Sobre Mim"
 - Adicionar página "Inspo"
 - Alguma forma de voltar para a página "Blog" quando estou dentro de algum post
+- Colocar efeito de hover em links
 
 IDEIAS
-- Uma frase abaixo do banner que muda toda vez que o usuário recarrega a página, tipo um easter egg, que nem no menu inicial do Minecraft
 - O banner ser um vídeo com as letras ransom animadas
 
 IDEIAS DE POST PARA O BLOG
@@ -26,3 +26,4 @@ IDEIAS DE POST PARA O BLOG
 
 FEITO
 - Diminuir padding do container na versão mobile apenas
+- Uma frase abaixo do banner que muda toda vez que o usuário recarrega a página, tipo um easter egg, que nem no menu inicial do Minecraft
