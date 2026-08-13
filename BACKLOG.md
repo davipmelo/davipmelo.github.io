@@ -20,6 +20,7 @@ IDEIAS DE POST PARA O BLOG
 - Quote collection vol. 1
 - Aphex Twin e a vibe half life gaming unreal tournament early internet anos 2000
 - MTG Flavour Text collection vol. 1
+- Uma coleção dos meus mixes favoritos de atmospheric jungle drum n bass
 
 ===================================
 
