@@ -60,7 +60,10 @@ const frases = [
   "How did you get this job? I dreamt about it.",
   "They will ignore you, until they can't.",
   "Treino é jogo, jogo é guerra.",
-  "Nada muda se nada mudar.",
+  "-20.553647, -47.405210",
+  "Say my name.",
+  "Better call Saul!",
+  "Nothing good happens after 2 a.m.",
   "From the underground to the underground, since 2017 'til god knows when."
 ];
 
