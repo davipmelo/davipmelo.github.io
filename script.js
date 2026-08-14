@@ -1,4 +1,27 @@
 /* =========================
+   Header
+========================= */
+
+fetch('/header.html')
+  .then(response => response.text())
+  .then(data => {
+    document.getElementById('site-header').innerHTML = data;
+
+    // A frase só é carregada depois que o header existe na página
+    carregarFraseHeader();
+  });
+
+/* =========================
+   Footer
+========================= */
+
+fetch('/footer.html')
+  .then(response => response.text())
+  .then(data => {
+    document.getElementById('site-footer').innerHTML = data;
+  });
+
+  /* =========================
    Frase aleatória do header
 ========================= */
 
@@ -28,6 +51,16 @@ const frases = [
   "Mamba mentality.",
   "Every time i get closer to the answer, the question changes.",
   "There is always a bigger picture.",
+  "You vs. you.",
+  "Written by Vince Gilligan.",
+  "The price of belonging is becoming someone else.",
+  "Every living creature dies alone.",
+  "GORE-TEX COVERS MY SOUL.",
+  "Everything I do is for the 17-year-old version of myself.",
+  "How did you get this job? I dreamt about it.",
+  "They will ignore you, until they can't.",
+  "Treino é jogo, jogo é guerra.",
+  "Nada muda se nada mudar.",
   "From the underground to the underground, since 2017 'til god knows when."
 ];
 
@@ -42,26 +75,3 @@ function carregarFraseHeader() {
 
   fraseHeader.textContent = `"${frases[indiceAleatorio]}"`;
 }
-
-/* =========================
-   Header
-========================= */
-
-fetch('/header.html')
-  .then(response => response.text())
-  .then(data => {
-    document.getElementById('site-header').innerHTML = data;
-
-    // A frase só é carregada depois que o header existe na página
-    carregarFraseHeader();
-  });
-
-/* =========================
-   Footer
-========================= */
-
-fetch('/footer.html')
-  .then(response => response.text())
-  .then(data => {
-    document.getElementById('site-footer').innerHTML = data;
-  });
