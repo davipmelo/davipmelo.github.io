@@ -26,6 +26,7 @@ const frases = [
   "When you have the chance, take it. Laugh, sing, dance. Don't allow the night to end...",
   "...But when the time comes, let go. Nothing lasts forever.",
   "Mamba mentality.",
+  "Every time i get closer to the answer, the question changes.",
   "From the underground to the underground, since 2017 'til god knows when."
 ];
 
