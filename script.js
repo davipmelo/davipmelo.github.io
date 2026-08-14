@@ -27,6 +27,7 @@ const frases = [
   "...But when the time comes, let go. Nothing lasts forever.",
   "Mamba mentality.",
   "Every time i get closer to the answer, the question changes.",
+  "There is always a bigger picture.",
   "From the underground to the underground, since 2017 'til god knows when."
 ];
 
