@@ -13,6 +13,7 @@ TO DO
 
 IDEIAS
 - O banner ser um vídeo com as letras ransom animadas
+- Incorporar um guestbook no site
 
 IDEIAS DE POST PARA O BLOG
 - Pessoas que me inspiram criativamente
