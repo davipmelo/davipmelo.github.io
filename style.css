@@ -10,6 +10,7 @@
   --bg-container: #0D0D0D;
   --container-border: #252525;
   --link-color: #ffbb00;
+  --link-hover-color: #ffde83;
   --font-family: Helvetica, Arial, sans-serif;
   --frase-tamanho: 16px;
   --frase-cor: #6e6d6e;
@@ -26,6 +27,7 @@
   --bg-container: #030303;
   --container-border: #00ff00;
   --link-color: #00ff00;
+  --link-hover-color: #ffffff;
   --font-family: Courier-New, monospace;
   --frase-tamanho: 16px;
   --frase-cor: #6e6d6e;
@@ -66,12 +68,17 @@ body {
   border-right: 2px solid var(--container-border); /* Adiciona borda lateral direita */
 }
 
-/* Define a aparência dos links em todos os estados */
+/* Define a aparência dos links (estados normais) */
 a:link,
 a:visited,
-a:hover,
 a:active {
   color: var(--link-color); /* Define a cor dos links */
+  text-decoration: none; /* Remove o sublinhado padrão dos links */
+}
+
+/* Define a aparência do link ao passar o mouse */
+a:hover {
+  color: var(--link-hover-color); /* Define a cor do link no hover */
   text-decoration: none; /* Remove o sublinhado padrão dos links */
 }
 
@@ -108,7 +115,6 @@ img {
   -webkit-column-break-inside: avoid; /* Compatibilidade com navegadores baseados em WebKit */
   page-break-inside: avoid; /* Compatibilidade extra para evitar quebras em alguns navegadores */
 }
-
 
 /* Estilo do banner do header */
 .logo-header {
