@@ -126,7 +126,7 @@ img {
 }
 
 /* Ajuste para telas menores, como celulares */
-@media (max-width: 768px) {
+@media (max-width: 1100px) {
   .galeria {
     column-count: 1; /* Faz a galeria virar uma coluna só no celular */
   }
