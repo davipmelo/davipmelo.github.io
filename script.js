@@ -40,7 +40,7 @@ const frases = [
   "Get out of your own way.",
   "Stealth edition.",
   "S05E01 - Live Free or Die.",
-  "Take the good with the bad.",
+  "Hey... You. You're finally awake.",
   "Same again?",
   "Honestly, nevermind.",
   "Good for health, bad for education!",
@@ -53,7 +53,7 @@ const frases = [
   "There is always a bigger picture.",
   "You vs. you.",
   "Written by Vince Gilligan.",
-  "The price of belonging is becoming someone else.",
+  "A new hand touches the beacon!",
   "Every living creature dies alone.",
   "GORE-TEX COVERS MY SOUL.",
   "Everything I do is for the 17-year-old version of myself.",
@@ -64,7 +64,12 @@ const frases = [
   "Say my name.",
   "Better call Saul!",
   "Nothing good happens after 2 a.m.",
+  "Put these foolish ambitions to rest!",
+  "Together, we will devour the very gods!",
+  "Nacho Varga deserved better!",
+  "I need a new dust filter for my Hoover Max Extract Pressure Pro, Model 60.",
   "From the underground to the underground, since 2017 'til god knows when."
+  
 ];
 
 function carregarFraseHeader() {
