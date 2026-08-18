@@ -68,6 +68,8 @@ const frases = [
   "Together, we will devour the very gods!",
   "Nacho Varga deserved better!",
   "I need a new dust filter for my Hoover Max Extract Pressure Pro, Model 60.",
+  "Wake up, Neo...",
+  "Follow the white rabbit.",
   "From the underground to the underground, since 2017 'til god knows when."
   
 ];
