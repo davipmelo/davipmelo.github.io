@@ -135,6 +135,15 @@ img {
   }
 }
 
+@media (min-width: 1100px) {
+  .container--wide-desktop {
+    max-width: 1800px;
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+}
+
+/* Ajustes de espaçamentos para parágrafos */
 p {
   line-height: 1.5;
   margin-bottom: 0px;
@@ -148,4 +157,24 @@ p {
   line-height: var(--frase-espacamento-linhas);
   font-style: italic;
   text-align: center;
+}
+
+/* Ajustes específicos pras imagens da página archive ficarem em PB*/
+.pagina-pb .galeria img {
+  filter: grayscale(100%);
+  transition: filter 0.35s ease;
+}
+
+/* Quando passar o mouse 
+.pagina-pb .galeria img:hover {
+  filter: grayscale(0%);
+}
+*/
+
+/* Galeria do arquivo */
+@media (min-width: 1100px) {
+  .pagina-pb .galeria {
+    column-count: 5
+  ;
+  }
 }

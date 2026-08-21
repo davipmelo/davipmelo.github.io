@@ -74,6 +74,10 @@ const frases = [
   
 ];
 
+/* =========================
+   Carregar frase aleatória no header
+========================= */
+
 function carregarFraseHeader() {
   const fraseHeader = document.getElementById("frase-header");
 
@@ -85,3 +89,24 @@ function carregarFraseHeader() {
 
   fraseHeader.textContent = `"${frases[indiceAleatorio]}"`;
 }
+
+/* =========================
+    Embaralhar imagens da galeria
+========================= */
+
+function embaralharGaleriaArchive() {
+  const galeria = document.querySelector(".galeria--archive");
+  if (!galeria) return;
+
+  const imagens = Array.from(galeria.querySelectorAll("img"));
+
+  for (let i = imagens.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [imagens[i], imagens[j]] = [imagens[j], imagens[i]];
+  }
+
+  galeria.innerHTML = "";
+  imagens.forEach((img) => galeria.appendChild(img));
+}
+
+embaralharGaleriaArchive();
