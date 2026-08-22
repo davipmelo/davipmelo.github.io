@@ -8,7 +8,6 @@ TO DO
 - Tentar alinhar o fundo da galeria de fotos mesmo com as imagens de alturas diferentes
 - Achar uma fonte para o tema default do site (Helvetica parece meio sem sal...)
 - Adicionar página "Sobre Mim"
-- Adicionar página "Inspo/Archive/Visual Library"
 - Alguma forma de voltar para a página "Blog" quando estou dentro de algum post
 
 IDEIAS
@@ -31,3 +30,4 @@ FEITO
 - Diminuir padding do container na versão mobile apenas
 - Uma frase abaixo do banner que muda toda vez que o usuário recarrega a página, tipo um easter egg, que nem no menu inicial do Minecraft
 - Colocar efeito de hover em links
+- Adicionar página "Inspo/Archive/Visual Library"
