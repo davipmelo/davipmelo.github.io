@@ -91,22 +91,23 @@ function carregarFraseHeader() {
 }
 
 /* =========================
-    Embaralhar imagens da galeria
+   Embaralhar imagens da galeria
 ========================= */
 
-function embaralharGaleriaArchive() {
-  const galeria = document.querySelector(".galeria--archive");
-  if (!galeria) return;
+function embaralharElementos(container) {
+  const itens = Array.from(container.querySelectorAll("img"));
 
-  const imagens = Array.from(galeria.querySelectorAll("img"));
-
-  for (let i = imagens.length - 1; i > 0; i--) {
+  for (let i = itens.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [imagens[i], imagens[j]] = [imagens[j], imagens[i]];
+    [itens[i], itens[j]] = [itens[j], itens[i]];
   }
 
-  galeria.innerHTML = "";
-  imagens.forEach((img) => galeria.appendChild(img));
+  itens.forEach((item) => container.appendChild(item));
 }
 
-embaralharGaleriaArchive();
+function embaralharGalerias() {
+  const galerias = document.querySelectorAll(".galeria--random");
+  galerias.forEach((galeria) => embaralharElementos(galeria));
+}
+
+document.addEventListener("DOMContentLoaded", embaralharGalerias);

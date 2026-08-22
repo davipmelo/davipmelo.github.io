@@ -178,3 +178,11 @@ p {
   ;
   }
 }
+
+/* Galeria do portfolio */
+@media (min-width: 1100px) {
+  .galeria--index .galeria {
+    column-count: 1
+  ;
+  }
+}
