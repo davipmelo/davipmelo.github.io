@@ -70,6 +70,7 @@ const frases = [
   "I need a new dust filter for my Hoover Max Extract Pressure Pro, Model 60.",
   "Wake up, Neo...",
   "Follow the white rabbit.",
+  "Red deck wins.",
   "From the underground to the underground, since 2017 'til god knows when."
   
 ];
