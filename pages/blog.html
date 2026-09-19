@@ -1,39 +1,17 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+---
+layout: default
+title: BLOG
+---
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<div class="container">
+  <main>
+    <!-- Aqui é a linha de título da página -->
+    <h1>BLOG</h1>
 
-  <!-- Esse é o nome que aparece na aba do navegador -->
-  <title>BLOG</title>
+    <!-- O Jekyll gera a lista automaticamente a partir da pasta _posts -->
+    {% for post in site.posts %}
+      <p>{{ post.date | date: "%Y_%m_%d" }} - <a href="{{ post.url }}">{{ post.title }}</a></p>
+    {% endfor %}
 
-  <link rel="icon" type="image/x-icon" href="/favicon.ico">
-  <link rel="stylesheet" href="../style.css">
-  <script src="../script.js" defer></script>
-</head>
-
-<body>
-  <div class="container">
-    <div id="site-header"></div>
-
-    <main>
-
-      <!-- Aqui é a linha de título da página -->
-      <h1>BLOG</h1>
-
-      <!-- Aqui começa efetivamente o conteúdo da postagem -->
-      
-      <!--<p>2026_08_13 - <a href="../posts/0003_stalenhag.html">O Mundo Distópico de Simon Stalenhag</a></p>-->
-      <p>2026_05_14 - <a href="../posts/0002_testestest.html">Test Test Test</a></p>
-      <p>2026_05_06 - <a href="../posts/0001_helloworld.html">Olá Mundo</a></p>
-
-      <!-- Aqui é o fim da postagem -->
-
-    </main>
-
-    <div id="site-footer"></div>
-  </div>
-</body>
-
-</html>
+  </main>
+</div>
