@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Test Test Test"
+published: true
 ---
 
 Esse é um teste de texto de **RTF para HTML**, <u>não sei exatamente o que ele tá fazendo, mas me parece que funciona.</u>

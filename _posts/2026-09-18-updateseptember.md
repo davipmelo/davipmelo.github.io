@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Updates"
+published: true
 ---
 
 Bom, faz uns meses que eu não apareço por aqui. Trabalhei em vários projetos nesse meio tempo, mas tô feliz por voltar um pouquinho pro site.

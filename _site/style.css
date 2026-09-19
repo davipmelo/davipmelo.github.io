@@ -252,3 +252,25 @@ img {
 .galeria img {
   cursor: zoom-in;
 }
+
+/* =========================
+   ESTILO PARA TABELAS
+========================= */
+table {
+  width: auto; /* Faz a tabela se ajustar ao conteúdo */
+  border-collapse: collapse;
+  margin: 30px 0;
+  font-size: 15px;
+}
+
+th, td {
+  border: 1px solid var(--container-border);
+  padding: 12px 20px;
+  text-align: left;
+  white-space: nowrap; /* Mantém o texto alinhado sem quebrar linha à força */
+}
+
+th {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--link-color);
+}

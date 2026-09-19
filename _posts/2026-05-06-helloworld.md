@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Olá Mundo"
+published: true
 ---
 
 Eu sempre quis criar um blog para ter um espaço onde posso escrever sobre literalmente qualquer coisa que vem na cabeça, e apesar de ser uma forma bem mais complexa do que simplesmente usar uma plataforma, acho que esse github pages vai me ajudar bastante nisso.
