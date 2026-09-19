@@ -11,15 +11,13 @@
 </head>
 <body>
 
-  <div class="container galeria--index">
+  <!-- O Jekyll agora vai puxar a classe específica de cada página -->
+  <div class="container {{ page.container_class }}">
     
-    <!-- O Jekyll insere seu menu de _includes/header.html aqui -->
     {% include header.html %}
     
-    <!-- O Jekyll insere o conteúdo do seu novo index.html aqui -->
     {{ content }}
     
-    <!-- O Jekyll insere seu rodapé de _includes/footer.html aqui -->
     {% include footer.html %}
     
   </div>
