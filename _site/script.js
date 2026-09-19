@@ -183,3 +183,94 @@ document.addEventListener("DOMContentLoaded", () => {
     observador.observe(sentinela);
   }
 });
+
+// LIGHTBOX PARA AMPLIAR IMAGENS DA GALERIA----------------------------------------------------------
+
+document.addEventListener("DOMContentLoaded", () => {
+  // Cria a estrutura HTML do Lightbox dinamicamente
+  const lightboxHTML = `
+    <div class="lightbox-overlay" id="lightbox">
+      <button class="lightbox-botao lightbox-fechar">&times;</button>
+      <button class="lightbox-botao lightbox-anterior">&#10094;</button>
+      <div class="lightbox-conteudo">
+        <img src="" alt="Imagem ampliada">
+      </div>
+      <button class="lightbox-botao lightbox-proxima">&#10095;</button>
+    </div>
+  `;
+  
+  document.body.insertAdjacentHTML('beforeend', lightboxHTML);
+
+  const lightbox = document.getElementById("lightbox");
+  const lightboxImg = lightbox.querySelector(".lightbox-conteudo img");
+  const btnFechar = lightbox.querySelector(".lightbox-fechar");
+  const btnAnterior = lightbox.querySelector(".lightbox-anterior");
+  const btnProxima = lightbox.querySelector(".lightbox-proxima");
+
+  let imagensGaleria = [];
+  let indiceAtual = 0;
+
+  // Usa delegação de eventos no documento para pegar imagens atuais e futuras (infinite scroll)
+  document.addEventListener("click", (e) => {
+    if (e.target.tagName === "IMG" && e.target.closest(".galeria")) {
+      const imgClicada = e.target;
+      const galeriaPai = imgClicada.closest(".galeria");
+      
+      // Pega todas as imagens daquela galeria específica naquele exato momento
+      imagensGaleria = Array.from(galeriaPai.querySelectorAll("img"));
+      indiceAtual = imagensGaleria.indexOf(imgClicada);
+
+      if (indiceAtual !== -1) {
+        atualizarImagemLightbox();
+        lightbox.classList.add("ativo");
+        document.body.style.overflow = "hidden"; // Trava a rolagem da página de fundo
+      }
+    }
+  });
+
+  function atualizarImagemLightbox() {
+    if (imagensGaleria.length > 0 && imagensGaleria[indiceAtual]) {
+      lightboxImg.src = imagensGaleria[indiceAtual].src;
+    }
+  }
+
+  function fecharLightbox() {
+    lightbox.classList.remove("ativo");
+    document.body.style.overflow = "auto"; // Libera a rolagem
+  }
+
+  function proximaImagem(e) {
+    if (e) e.stopPropagation();
+    if (imagensGaleria.length === 0) return;
+    indiceAtual = (indiceAtual + 1) % imagensGaleria.length;
+    atualizarImagemLightbox();
+  }
+
+  function imagemAnterior(e) {
+    if (e) e.stopPropagation();
+    if (imagensGaleria.length === 0) return;
+    indiceAtual = (indiceAtual - 1 + imagensGaleria.length) % imagensGaleria.length;
+    atualizarImagemLightbox();
+  }
+
+  // Eventos de clique nos botões
+  btnFechar.addEventListener("click", fecharLightbox);
+  btnProxima.addEventListener("click", proximaImagem);
+  btnAnterior.addEventListener("click", imagemAnterior);
+
+  // Fechar ao clicar fora da imagem (no fundo escuro)
+  lightbox.addEventListener("click", (e) => {
+    if (e.target === lightbox) {
+      fecharLightbox();
+    }
+  });
+
+  // Navegação por teclado (Setas esquerda/direita e ESC para fechar)
+  document.addEventListener("keydown", (e) => {
+    if (!lightbox.classList.contains("ativo")) return;
+    
+    if (e.key === "Escape") fecharLightbox();
+    if (e.key === "ArrowRight") proximaImagem();
+    if (e.key === "ArrowLeft") imagemAnterior();
+  });
+});
