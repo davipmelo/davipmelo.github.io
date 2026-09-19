@@ -184,7 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// LIGHTBOX PARA AMPLIAR IMAGENS DA GALERIA----------------------------------------------------------
+// LIGHTBOX PARA AMPLIAR IMAGENS DA GALERIA (APENAS DESKTOP) ------------------------------------------
 
 document.addEventListener("DOMContentLoaded", () => {
   // Cria a estrutura HTML do Lightbox dinamicamente
@@ -212,6 +212,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Usa delegação de eventos no documento para pegar imagens atuais e futuras (infinite scroll)
   document.addEventListener("click", (e) => {
+    // Se a tela for menor ou igual a 1100px (Mobile/Tablet), o Lightbox não é acionado
+    if (window.innerWidth <= 1100) return;
+
     if (e.target.tagName === "IMG" && e.target.closest(".galeria")) {
       const imgClicada = e.target;
       const galeriaPai = imgClicada.closest(".galeria");
