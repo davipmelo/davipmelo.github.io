@@ -112,3 +112,74 @@ function embaralharGalerias() {
 }
 
 document.addEventListener("DOMContentLoaded", embaralharGalerias);
+
+/* =========================
+   SCRIPT PARA CARREGAMENTO INFINITO DE IMAGENS
+========================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+  const galeria = document.getElementById("galeria");
+  const sentinela = document.getElementById("sentinela");
+  
+  // 1. Gera a lista de imagens dinamicamente (de 1 a 318)
+  // ESSE NÚMERO É A ÚNICA COISA QUE DEVE SER ALTERADA CASO NOVAS IMAGENS SEJAM ADICIONADAS
+  const totalImagens = 318;
+  const imagens = [];
+  
+  for (let i = 1; i <= totalImagens; i++) {
+    // Transforma "1" em "0001", "25" em "0025", etc.
+    const numeroFormatado = i.toString().padStart(4, '0');
+    imagens.push(`../img/archive/arch-${numeroFormatado}.jpg`);
+  }
+
+  // 2. Randomiza (embaralha) a ordem das imagens - Algoritmo Fisher-Yates
+  for (let i = imagens.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [imagens[i], imagens[j]] = [imagens[j], imagens[i]];
+  }
+
+  // 3. Configuração do carregamento infinito
+  let indiceAtual = 0;
+  const quantidadePorVez = 30;
+
+  function carregarMaisImagens() {
+    // Calcula até onde o loop deve ir neste lote
+    const limite = Math.min(indiceAtual + quantidadePorVez, imagens.length);
+    
+    // Usar um fragmento melhora a performance ao inserir no DOM
+    const fragmento = document.createDocumentFragment();
+
+    for (let i = indiceAtual; i < limite; i++) {
+      const img = document.createElement("img");
+      img.src = imagens[i];
+      img.alt = `Imagem de arquivo`;
+      img.loading = "lazy"; // Garante carregamento suave
+      fragmento.appendChild(img);
+    }
+
+    galeria.appendChild(fragmento);
+    indiceAtual = limite;
+
+    // Se todas as imagens foram carregadas, para de observar a sentinela
+    if (indiceAtual >= imagens.length) {
+      observador.unobserve(sentinela);
+    }
+  }
+
+  // 4. Observa a rolagem para ativar o carregamento
+  const observador = new IntersectionObserver((entradas) => {
+    // Quando a div #sentinela aparecer na tela, carrega mais fotos
+    if (entradas[0].isIntersecting) {
+      carregarMaisImagens();
+    }
+  }, { 
+    // rootMargin de "200px" faz com que comece a carregar 200px antes 
+    // de chegar no fim, evitando que o usuário veja a página vazia
+    rootMargin: "200px" 
+  });
+
+  // Inicia a observação
+  if (galeria && sentinela) {
+    observador.observe(sentinela);
+  }
+});
