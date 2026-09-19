@@ -1,0 +1,188 @@
+/* =========================
+   TEMA DO SITE
+   Deixar só o tema desejado sem comentário e o restante comentado
+========================= */
+
+/* DEFAULT.THEME */
+:root {
+  --bg-page: #030303;
+  --text-color: #ffffff;
+  --bg-container: #0D0D0D;
+  --container-border: #252525;
+  --link-color: #ffbb00;
+  --link-hover-color: #ffde83;
+  --font-family: Helvetica, Arial, sans-serif;
+  --frase-tamanho: 16px;
+  --frase-cor: #6e6d6e;
+  --frase-espacamento-linhas: 1.4;
+  --frase-margem-superior: 0px;
+  --frase-margem-inferior: 20px;
+}
+
+/* HACKERBOY.THEME 
+
+:root {
+  --bg-page: #030303;
+  --text-color: #00ff00;
+  --bg-container: #030303;
+  --container-border: #00ff00;
+  --link-color: #00ff00;
+  --link-hover-color: #ffffff;
+  --font-family: Courier-New, monospace;
+  --frase-tamanho: 16px;
+  --frase-cor: #6e6d6e;
+  --frase-espacamento-linhas: 1.4;
+  --frase-margem-superior: 0px;
+  --frase-margem-inferior: 20px;
+}*/
+
+/* =========================
+   CONFIGURAÇÕES GERAIS
+========================= */
+
+/* Define margem e espaçamento padrão de todos os títulos */
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  padding: 0;
+}
+
+/* Define o estilo geral da página */
+body {
+  margin: 0; /* Define a margem padrão do navegador */
+  padding: 0; /* Define o espaçamento interno padrão */
+  background: var(--bg-page); /* Define a cor de fundo geral da página */
+  color: var(--text-color); /* Define a cor padrão do texto */
+  font-family: var(--font-family); /* Define a fonte padrão do site */
+}
+
+/* Container principal que segura todo o conteúdo da página */
+.container {
+  width: 100%; /* Define a porcentagem que o container vai ocupar da largura disponível (porcentagem da max-width) */
+  max-width: 1100px; /* Limita a largura máxima do container */
+  min-height: 100vh; /* Faz o container ter pelo menos a altura total da tela */
+  margin: 0 auto; /* Centraliza o container horizontalmente */
+  padding: 30px; /* Cria uma margem interna em todos os lados */
+  box-sizing: border-box; /* Faz padding (margem) entrar no cálculo da largura total */
+  background-color: var(--bg-container); /* Define a cor de fundo do container */
+  border-left: 2px solid var(--container-border); /* Adiciona borda lateral esquerda */
+  border-right: 2px solid var(--container-border); /* Adiciona borda lateral direita */
+}
+
+/* Define a aparência dos links (estados normais) */
+a:link,
+a:visited,
+a:active {
+  color: var(--link-color); /* Define a cor dos links */
+  text-decoration: none; /* Remove o sublinhado padrão dos links */
+}
+
+/* Define a aparência do link ao passar o mouse */
+a:hover {
+  color: var(--link-hover-color); /* Define a cor do link no hover */
+  text-decoration: none; /* Remove o sublinhado padrão dos links */
+}
+
+/* Estilo padrão para todas as imagens do site */
+img {
+  width: 100%; /* Faz a imagem ocupar toda a largura do elemento pai */
+  height: auto; /* Mantém a proporção original da imagem */
+  display: block; /* Remove espaços indesejados abaixo da imagem */
+  margin-bottom: 20px; /* Adiciona espaço abaixo de cada imagem */
+  margin-top: 20px; /* Adiciona espaço acima de cada imagem */
+}
+
+/* Estilo para embeds de vídeo do YouTube */
+.yt-embed {
+  width: 100%; /* Faz o vídeo ocupar toda a largura disponível */
+  aspect-ratio: 16 / 9; /* Mantém proporção padrão de vídeo widescreen */
+  border: 0; /* Remove a borda do iframe */
+}
+
+/* Cria uma galeria em duas colunas */
+.galeria {
+  column-count: 2; /* Divide o conteúdo da galeria em 2 colunas */
+  column-gap: 20px; /* Define 20px de espaço horizontal entre uma coluna e outra */
+  padding-top: 20px; /* Adiciona um respiro de 20px no topo da galeria */
+}
+
+/* Imagens dentro da galeria */
+.galeria img {
+  display: inline-block; /* Faz cada imagem se comportar como bloco dentro do layout em colunas */
+  width: 100%; /* Faz a imagem ocupar toda a largura disponível da coluna */
+  vertical-align: top; /* Alinha o conteúdo pelo topo, ajudando a evitar desalinhamento visual */
+  margin: 0 0 20px 0; /* Adiciona 20px apenas abaixo de cada imagem */
+  break-inside: avoid; /* Evita que a imagem seja quebrada entre colunas */
+  -webkit-column-break-inside: avoid; /* Compatibilidade com navegadores baseados em WebKit */
+  page-break-inside: avoid; /* Compatibilidade extra para evitar quebras em alguns navegadores */
+}
+
+/* Estilo do banner do header */
+.logo-header {
+  width: 100%; /* Permite que a imagem se ajuste ao espaço disponível */
+  max-width: 750px; /* Limita a largura máxima da imagem */
+  height: auto; /* Mantém a proporção original da imagem */
+  display: block; /* Faz a imagem se comportar como bloco */
+  margin: 0 auto 5px; /* Centraliza a imagem e adiciona espaço abaixo dela */
+}
+
+/* Ajuste para telas menores, como celulares */
+@media (max-width: 1100px) {
+  .galeria {
+    column-count: 1; /* Faz a galeria virar uma coluna só no celular */
+  }
+  .container {
+    padding: 10px; /* Reduz o padding do container em telas menores */
+  }
+}
+
+@media (min-width: 1100px) {
+  .container--wide-desktop {
+    max-width: 1500px;
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+}
+
+/* Ajustes de espaçamentos para parágrafos */
+p {
+  line-height: 1.5;
+  margin-bottom: 0px;
+}
+
+/* Frase aleatória abaixo do banner */
+#frase-header {
+  margin: var(--frase-margem-superior) 0 var(--frase-margem-inferior);
+  color: var(--frase-cor);
+  font-size: var(--frase-tamanho);
+  line-height: var(--frase-espacamento-linhas);
+  font-style: italic;
+  text-align: center;
+}
+
+/* Ajustes específicos pras imagens da página archive ficarem em PB
+.pagina-pb .galeria img {
+  filter: grayscale(100%);
+  transition: filter 0.35s ease;
+}*/
+
+/* Quando passar o mouse 
+.pagina-pb .galeria img:hover {
+  filter: grayscale(0%);
+}
+*/
+
+/* Galeria do arquivo */
+@media (min-width: 1100px) {
+  .pagina-pb .galeria {
+    column-count: 3
+  ;
+  }
+}
+
+/* Galeria do portfolio */
+@media (min-width: 1100px) {
+  .galeria--index .galeria {
+    column-count: 1
+  ;
+  }
+}
