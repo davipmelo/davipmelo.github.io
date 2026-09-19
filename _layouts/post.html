@@ -5,6 +5,11 @@ layout: default
   <article class="postagem-blog">
     <h1>{{ page.title }}</h1>
     
+    <!-- Tag que puxa a data e formata como DD/MM/AAAA -->
+    <p style="font-size: 0.8rem; opacity: 0.6; margin-top: -10px; margin-bottom: 30px;">
+      {{ page.date | date: "%d/%m/%Y" }}
+    </p>
+    
     <div class="conteudo-post">
       {{ content }}
     </div>
