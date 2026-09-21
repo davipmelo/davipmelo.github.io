@@ -71,6 +71,7 @@ const frases = [
   "Wake up, Neo...",
   "Follow the white rabbit.",
   "Red deck wins.",
+  "What is better? To be born good, or to overcome your evil nature through great effort?",
   "From the underground to the underground, since 2017 'til god knows when."
   
 ];
@@ -123,7 +124,7 @@ document.addEventListener("DOMContentLoaded", () => {
   
   // 1. Gera a lista de imagens dinamicamente (de 1 a 318)
   // ESSE NÚMERO É A ÚNICA COISA QUE DEVE SER ALTERADA CASO NOVAS IMAGENS SEJAM ADICIONADAS
-  const totalImagens = 1049;
+  const totalImagens = 1068;
   const imagens = [];
   
   for (let i = 1; i <= totalImagens; i++) {
