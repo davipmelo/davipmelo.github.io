@@ -123,6 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Cancela a execução se não estiver na página de arquivo
   if (!galeria || !sentinela) return;
 
+  //ALTERAR ESSE NÚMERO APÓS ADICIONAR OU REMOVER IMAGENS DO ARQUIVO -------------------------------------------------------
   const totalImagens = 1068;
   const imagens = [];
   
