@@ -53,7 +53,7 @@ img {
   width: 100%;
   height: auto;
   display: block;
-  margin: 20px 0; /* Aplica 20px no topo e na base, 0 nas laterais */
+  margin: 20px 0;
 }
 
 /* =========================
@@ -108,7 +108,7 @@ img {
 }
 
 /* =========================
-   GALERIA E COLUNAS
+   GALERIA ESTÁTICA (PADRÃO CSS)
 ========================= */
 .galeria {
   column-count: 2;
@@ -124,6 +124,33 @@ img {
   break-inside: avoid;
   -webkit-column-break-inside: avoid;
   page-break-inside: avoid;
+}
+
+/* =========================
+   GALERIA INFINITA (COLUNAS FÍSICAS JS)
+========================= */
+#galeria {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: flex-start;
+  padding-top: 20px;
+  /* Anula as regras de column-count caso a classe .galeria seja usada junto */
+  column-count: auto; 
+}
+
+.galeria-coluna {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex: 1;
+  width: 100%;
+}
+
+.galeria-coluna img {
+  width: 100%;
+  display: block;
+  margin: 0; /* O espaçamento agora é feito pelo gap do flexbox */
 }
 
 /* =========================
@@ -162,7 +189,7 @@ img {
 ========================= */
 .botao-voltar {
   display: inline-block;
-  margin-bottom: 20px; /* Empurra o título do post para baixo */
+  margin-bottom: 20px;
   letter-spacing: 1px;
 }
 
@@ -214,7 +241,8 @@ img {
 }
 
 @media (min-width: 1100px) {
-  .galeria img {
+  .galeria img, 
+  #galeria img {
     cursor: zoom-in;
   }
 
@@ -259,7 +287,7 @@ img {
    ESTILO PARA TABELAS
 ========================= */
 table {
-  width: auto; /* Faz a tabela se ajustar ao conteúdo */
+  width: auto;
   border-collapse: collapse;
   margin: 30px 0;
   font-size: 15px;
@@ -269,7 +297,7 @@ th, td {
   border: 1px solid var(--container-border);
   padding: 12px 20px;
   text-align: left;
-  white-space: nowrap; /* Mantém o texto alinhado sem quebrar linha à força */
+  white-space: nowrap;
 }
 
 th {

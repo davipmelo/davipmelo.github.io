@@ -3,12 +3,11 @@ Esse é o backlog do projeto com algumas ideias que quero desenvolver e coisas q
 ===================================
 
 TO DO
-- Selecionar e ordenar fotos para o portfolio 2026!!!!!
+- Selecionar fotos para o portfolio 2026!!!!!
 - Depois de selecionar fotos do portfolio, exportar todas no lightroom em um setup leve para melhorar carregamento da home
 - Tentar alinhar o fundo da galeria de fotos mesmo com as imagens de alturas diferentes
-- Achar uma fonte para o tema default do site (Helvetica parece meio sem sal...)
+- Achar uma fonte para o tema default do site
 - Adicionar página "Sobre Mim"
-- Alguma forma de voltar para a página "Blog" quando estou dentro de algum post
 
 IDEIAS
 - O banner ser um vídeo com as letras ransom animadas
@@ -31,3 +30,4 @@ FEITO
 - Uma frase abaixo do banner que muda toda vez que o usuário recarrega a página, tipo um easter egg, que nem no menu inicial do Minecraft
 - Colocar efeito de hover em links
 - Adicionar página "Inspo/Archive/Visual Library"
+- Alguma forma de voltar para a página "Blog" quando estou dentro de algum post

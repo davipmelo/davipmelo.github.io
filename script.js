@@ -73,7 +73,6 @@ const frases = [
   "Red deck wins.",
   "What is better? To be born good, or to overcome your evil nature through great effort?",
   "From the underground to the underground, since 2017 'til god knows when."
-  
 ];
 
 /* =========================
@@ -88,12 +87,11 @@ function carregarFraseHeader() {
   }
 
   const indiceAleatorio = Math.floor(Math.random() * frases.length);
-
   fraseHeader.textContent = `"${frases[indiceAleatorio]}"`;
 }
 
 /* =========================
-   Embaralhar imagens da galeria
+   Embaralhar imagens da galeria (Estática)
 ========================= */
 
 function embaralharElementos(container) {
@@ -115,80 +113,81 @@ function embaralharGalerias() {
 document.addEventListener("DOMContentLoaded", embaralharGalerias);
 
 /* =========================
-   SCRIPT PARA CARREGAMENTO INFINITO DE IMAGENS
+   SCRIPT PARA CARREGAMENTO INFINITO DE IMAGENS (COLUNAS FÍSICAS)
 ========================= */
 
 document.addEventListener("DOMContentLoaded", () => {
   const galeria = document.getElementById("galeria");
   const sentinela = document.getElementById("sentinela");
   
-  // 1. Gera a lista de imagens dinamicamente (de 1 a 318)
-  // ESSE NÚMERO É A ÚNICA COISA QUE DEVE SER ALTERADA CASO NOVAS IMAGENS SEJAM ADICIONADAS
+  // Cancela a execução se não estiver na página de arquivo
+  if (!galeria || !sentinela) return;
+
   const totalImagens = 1068;
   const imagens = [];
   
   for (let i = 1; i <= totalImagens; i++) {
-    // Transforma "1" em "0001", "25" em "0025", etc.
     const numeroFormatado = i.toString().padStart(4, '0');
     imagens.push(`../img/archive/arch-${numeroFormatado}.jpg`);
   }
 
-  // 2. Randomiza (embaralha) a ordem das imagens - Algoritmo Fisher-Yates
+  // Randomiza a ordem original das imagens
   for (let i = imagens.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [imagens[i], imagens[j]] = [imagens[j], imagens[i]];
   }
 
-  // 3. Configuração do carregamento infinito
+  // Criação das colunas físicas com base na largura da tela
+  const qtdColunas = window.innerWidth <= 1100 ? 1 : 3;
+  const colunasDOM = [];
+
+  // Limpa o container e insere as divs de colunas
+  galeria.innerHTML = "";
+  for (let i = 0; i < qtdColunas; i++) {
+    const coluna = document.createElement("div");
+    coluna.classList.add("galeria-coluna");
+    galeria.appendChild(coluna);
+    colunasDOM.push(coluna);
+  }
+
   let indiceAtual = 0;
   const quantidadePorVez = 30;
 
   function carregarMaisImagens() {
-    // Calcula até onde o loop deve ir neste lote
     const limite = Math.min(indiceAtual + quantidadePorVez, imagens.length);
-    
-    // Usar um fragmento melhora a performance ao inserir no DOM
-    const fragmento = document.createDocumentFragment();
 
     for (let i = indiceAtual; i < limite; i++) {
       const img = document.createElement("img");
       img.src = imagens[i];
       img.alt = `Imagem de arquivo`;
-      img.loading = "lazy"; // Garante carregamento suave
-      fragmento.appendChild(img);
+      img.loading = "lazy";
+
+      // Distribui as imagens nas colunas fixas
+      const indexColuna = i % qtdColunas;
+      colunasDOM[indexColuna].appendChild(img);
     }
 
-    galeria.appendChild(fragmento);
     indiceAtual = limite;
 
-    // Se todas as imagens foram carregadas, para de observar a sentinela
     if (indiceAtual >= imagens.length) {
       observador.unobserve(sentinela);
     }
   }
 
-  // 4. Observa a rolagem para ativar o carregamento
   const observador = new IntersectionObserver((entradas) => {
-    // Quando a div #sentinela aparecer na tela, carrega mais fotos
     if (entradas[0].isIntersecting) {
       carregarMaisImagens();
     }
   }, { 
-    // rootMargin de "200px" faz com que comece a carregar 200px antes 
-    // de chegar no fim, evitando que o usuário veja a página vazia
     rootMargin: "200px" 
   });
 
-  // Inicia a observação
-  if (galeria && sentinela) {
-    observador.observe(sentinela);
-  }
+  observador.observe(sentinela);
 });
 
 // LIGHTBOX PARA AMPLIAR IMAGENS DA GALERIA (APENAS DESKTOP) ------------------------------------------
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Cria a estrutura HTML do Lightbox dinamicamente
   const lightboxHTML = `
     <div class="lightbox-overlay" id="lightbox">
       <button class="lightbox-botao lightbox-fechar">&times;</button>
@@ -211,23 +210,21 @@ document.addEventListener("DOMContentLoaded", () => {
   let imagensGaleria = [];
   let indiceAtual = 0;
 
-  // Usa delegação de eventos no documento para pegar imagens atuais e futuras (infinite scroll)
   document.addEventListener("click", (e) => {
-    // Se a tela for menor ou igual a 1100px (Mobile/Tablet), o Lightbox não é acionado
     if (window.innerWidth <= 1100) return;
 
-    if (e.target.tagName === "IMG" && e.target.closest(".galeria")) {
+    // Detecta imagens tanto em galerias estáticas (.galeria) quanto na infinita (#galeria)
+    if (e.target.tagName === "IMG" && (e.target.closest(".galeria") || e.target.closest("#galeria"))) {
       const imgClicada = e.target;
-      const galeriaPai = imgClicada.closest(".galeria");
+      const galeriaPai = e.target.closest(".galeria") || e.target.closest("#galeria");
       
-      // Pega todas as imagens daquela galeria específica naquele exato momento
       imagensGaleria = Array.from(galeriaPai.querySelectorAll("img"));
       indiceAtual = imagensGaleria.indexOf(imgClicada);
 
       if (indiceAtual !== -1) {
         atualizarImagemLightbox();
         lightbox.classList.add("ativo");
-        document.body.style.overflow = "hidden"; // Trava a rolagem da página de fundo
+        document.body.style.overflow = "hidden";
       }
     }
   });
@@ -240,7 +237,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function fecharLightbox() {
     lightbox.classList.remove("ativo");
-    document.body.style.overflow = "auto"; // Libera a rolagem
+    document.body.style.overflow = "auto";
   }
 
   function proximaImagem(e) {
@@ -257,19 +254,16 @@ document.addEventListener("DOMContentLoaded", () => {
     atualizarImagemLightbox();
   }
 
-  // Eventos de clique nos botões
   btnFechar.addEventListener("click", fecharLightbox);
   btnProxima.addEventListener("click", proximaImagem);
   btnAnterior.addEventListener("click", imagemAnterior);
 
-  // Fechar ao clicar fora da imagem (no fundo escuro)
   lightbox.addEventListener("click", (e) => {
     if (e.target === lightbox) {
       fecharLightbox();
     }
   });
 
-  // Navegação por teclado (Setas esquerda/direita e ESC para fechar)
   document.addEventListener("keydown", (e) => {
     if (!lightbox.classList.contains("ativo")) return;
     
