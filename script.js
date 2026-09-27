@@ -119,31 +119,21 @@ document.addEventListener("DOMContentLoaded", embaralharGalerias);
    SCRIPT PARA CARREGAMENTO INFINITO DE IMAGENS (PÁGINA ARCHIVE)
    ---------------------------------------------------------
    Usado apenas na página Archive (elementos #galeria e
-   #sentinela). As <img> não existem no HTML — são criadas via
-   JavaScript, em lotes, conforme o usuário rola a página.
+   #sentinela). As <img> são criadas via JavaScript, em lotes,
+   conforme o usuário rola a página.
 
-   IMPORTANTE - correção de um bug:
-   Antes a "galeria" era um único container com CSS
-   "column-count" (efeito de colunas tipo mosaico). O problema é
-   que "column-count" tenta balancear a altura das colunas toda
-   vez que um elemento novo é adicionado — ou seja, a cada lote
-   de 30 fotos carregado, o navegador recalculava a posição de
-   TODAS as imagens (inclusive as que já estavam na tela),
-   deixando tudo bagunçado por um instante.
-
-   A solução foi trocar por colunas de verdade (<div> criadas
-   aqui), cada uma funcionando como uma coluna independente via
-   flexbox (ver ".galeria--colunas" no style.css). Cada imagem
-   nova é sempre adicionada ao FINAL da coluna mais curta no
-   momento — as imagens que já estavam na tela nunca se movem.
+   As imagens são distribuídas de forma alternada (round-robin)
+   entre as colunas reais (<div> com flexbox). Isso garante que
+   todas as colunas sejam preenchidas por igual e que novas fotos
+   sejam inseridas sempre no final, abaixo das fotos já existentes,
+   SEM NUNCA ALTERAR A ORDEM nem reposicionar o que já está na tela.
 ========================= */
 
 document.addEventListener("DOMContentLoaded", () => {
   const galeria = document.getElementById("galeria");
   const sentinela = document.getElementById("sentinela");
 
-  // Se a página atual não tiver #galeria/#sentinela (ex.: home,
-  // blog), não há nada para fazer aqui.
+  // Se a página atual não tiver #galeria/#sentinela (ex.: home, blog), não há nada a fazer.
   if (!galeria || !sentinela) return;
 
   // 1. Gera a lista de imagens dinamicamente (de 1 a 1068)
@@ -154,7 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
   for (let i = 1; i <= totalImagens; i++) {
     // Transforma "1" em "0001", "25" em "0025", etc.
     const numeroFormatado = i.toString().padStart(4, '0');
-    imagens.push(`../img/archive/arch-${numeroFormatado}.jpg`);
+    imagens.push(`/img/archive/arch-${numeroFormatado}.jpg`);
   }
 
   // 2. Randomiza (embaralha) a ordem das imagens - Algoritmo Fisher-Yates
@@ -163,36 +153,36 @@ document.addEventListener("DOMContentLoaded", () => {
     [imagens[i], imagens[j]] = [imagens[j], imagens[i]];
   }
 
-  // 3. Cria as colunas reais que vão receber as imagens.
-  // O número de colunas segue o mesmo ponto de quebra usado no
-  // style.css para a página Archive (3 colunas a partir de
-  // 1100px, 1 coluna abaixo disso). Isso é decidido só uma vez,
-  // ao carregar a página (não se ajusta se a janela for
-  // redimensionada depois).
-  const numeroColunas = window.matchMedia("(min-width: 1100px)").matches ? 3 : 1;
+  // 3. Criação e gerenciamento das colunas
+  function obterNumeroColunas() {
+    return window.matchMedia("(min-width: 1100px)").matches ? 3 : 1;
+  }
+
   const colunas = [];
-
   galeria.classList.add("galeria--colunas");
-  for (let i = 0; i < numeroColunas; i++) {
-    const coluna = document.createElement("div");
-    coluna.className = "coluna-galeria";
-    galeria.appendChild(coluna);
-    colunas.push(coluna);
+
+  function criarColunas(qtd) {
+    galeria.innerHTML = "";
+    colunas.length = 0;
+    for (let i = 0; i < qtd; i++) {
+      const coluna = document.createElement("div");
+      coluna.className = "coluna-galeria";
+      galeria.appendChild(coluna);
+      colunas.push(coluna);
+    }
   }
 
-  // Retorna a coluna com menor altura atual, para equilibrar o
-  // "mosaico" à medida que novas imagens entram.
-  function colunaMaisCurta() {
-    return colunas.reduce((menor, atual) =>
-      atual.offsetHeight < menor.offsetHeight ? atual : menor
-    );
-  }
+  criarColunas(obterNumeroColunas());
 
   // 4. Configuração do carregamento infinito
   let indiceAtual = 0;
   const quantidadePorVez = 30;
+  let carregando = false;
 
   function carregarMaisImagens() {
+    if (carregando || indiceAtual >= imagens.length) return;
+    carregando = true;
+
     // Calcula até onde o loop deve ir neste lote
     const limite = Math.min(indiceAtual + quantidadePorVez, imagens.length);
 
@@ -200,35 +190,75 @@ document.addEventListener("DOMContentLoaded", () => {
       const img = document.createElement("img");
       img.src = imagens[i];
       img.alt = "Imagem de arquivo";
-      img.loading = "lazy"; // Garante carregamento suave
-      // Guarda a posição original (antes de ser distribuída nas
-      // colunas) para o lightbox conseguir navegar em "anterior/
-      // próxima" respeitando a ordem certa - ver seção do lightbox.
+      img.loading = "lazy"; // Carregamento sob demanda pelo navegador
+      // Guarda a posição original no dataset para navegação do lightbox
       img.dataset.index = i;
-      colunaMaisCurta().appendChild(img);
+
+      // Distribuição round-robin: cada imagem vai para a próxima coluna sequencialmente.
+      // Isso preenche todas as colunas de forma homogênea e coloca as fotos novas
+      // estritamente abaixo das já carregadas, sem alterar a ordem das existentes.
+      colunas[i % colunas.length].appendChild(img);
     }
 
     indiceAtual = limite;
 
-    // Se todas as imagens foram carregadas, para de observar a sentinela
     if (indiceAtual >= imagens.length) {
-      observador.unobserve(sentinela);
+      if (observador) observador.unobserve(sentinela);
+      window.removeEventListener("scroll", checarProximidadeSentinela);
+      carregando = false;
+      return;
+    }
+
+    // Libera a trava e verifica se a tela precisa de mais um lote (ex.: telas grandes)
+    setTimeout(() => {
+      carregando = false;
+      checarProximidadeSentinela();
+    }, 150);
+  }
+
+  function checarProximidadeSentinela() {
+    if (carregando || indiceAtual >= imagens.length) return;
+    const rect = sentinela.getBoundingClientRect();
+    // Se a sentinela estiver a 800px ou menos da parte inferior da tela, carrega mais um lote
+    if (rect.top <= window.innerHeight + 800) {
+      carregarMaisImagens();
     }
   }
 
-  // 5. Observa a rolagem para ativar o carregamento
+  // 5. IntersectionObserver para carregar o lote quando estiver próximo ao fim
   const observador = new IntersectionObserver((entradas) => {
-    // Quando a div #sentinela aparecer na tela, carrega mais fotos
-    if (entradas[0].isIntersecting) {
-      carregarMaisImagens();
-    }
+    entradas.forEach((entrada) => {
+      if (entrada.isIntersecting) {
+        carregarMaisImagens();
+      }
+    });
   }, {
-    // rootMargin de "200px" faz com que comece a carregar 200px antes
-    // de chegar no fim, evitando que o usuário veja a página vazia
-    rootMargin: "200px"
+    // rootMargin de "800px" antecipa o carregamento enquanto o usuário chega perto do fim
+    rootMargin: "800px"
   });
 
   observador.observe(sentinela);
+
+  // Monitora a rolagem para garantir carregamento contínuo em qualquer circunstância
+  window.addEventListener("scroll", checarProximidadeSentinela, { passive: true });
+
+  // Se o usuário redimensionar a janela mudando a quantidade de colunas,
+  // redistribui apenas as imagens já carregadas preservando 100% da ordem
+  window.addEventListener("resize", () => {
+    const qtdDesejada = obterNumeroColunas();
+    if (qtdDesejada !== colunas.length) {
+      const todasImagens = Array.from(galeria.querySelectorAll("img")).sort((a, b) => {
+        return Number(a.dataset.index) - Number(b.dataset.index);
+      });
+      criarColunas(qtdDesejada);
+      todasImagens.forEach((img, i) => {
+        colunas[i % colunas.length].appendChild(img);
+      });
+    }
+  });
+
+  // Carrega o primeiro lote imediatamente
+  carregarMaisImagens();
 });
 
 /* =========================
