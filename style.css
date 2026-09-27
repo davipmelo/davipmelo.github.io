@@ -1,14 +1,22 @@
 /* =========================
    VARIÁVEIS GERAIS
+   ---------------------------------------------------------
+   Cores e valores usados em várias partes do site. Centralizar
+   aqui facilita trocar a paleta ou os espaçamentos do site
+   inteiro editando só este bloco, sem caçar valores repetidos
+   no resto do arquivo.
 ========================= */
 :root {
-  --bg-page: #030303;
-  --text-color: #ffffff;
-  --bg-container: #0D0D0D;
-  --container-border: #252525;
-  --link-color: #ffbb00;
-  --link-hover-color: #ffde83;
+  --bg-page: #030303;           /* fundo da página (fora do container) */
+  --text-color: #ffffff;        /* cor de texto padrão */
+  --bg-container: #0D0D0D;      /* fundo da "caixa" central do site */
+  --container-border: #252525;  /* cor das bordas laterais do container e de tabelas */
+  --link-color: #ffbb00;        /* cor dos links (amarelo) */
+  --link-hover-color: #ffde83;  /* cor dos links ao passar o mouse */
   --font-family: Helvetica, Arial, sans-serif;
+
+  /* Configurações específicas da frase aleatória do header
+     (ver #frase-header logo abaixo e carregarFraseHeader() no script.js) */
   --frase-tamanho: 16px;
   --frase-cor: #6e6d6e;
   --frase-espacamento-linhas: 1.4;
@@ -50,8 +58,8 @@ a:hover {
 }
 
 img {
-  width: 100%;
-  height: auto;
+  width: 100%;   /* toda imagem ocupa a largura do elemento pai... */
+  height: auto;  /* ...e a altura acompanha proporcionalmente (sem distorcer) */
   display: block;
   margin: 20px 0; /* Aplica 20px no topo e na base, 0 nas laterais */
 }
@@ -95,11 +103,11 @@ img {
   margin-bottom: 10px;
 }
 
-.data-post {
-  margin-top: 0;
-  margin-bottom: 40px;
-  color: #888888;
-}
+/* Removida a classe ".data-post": ela não é usada em nenhum
+   arquivo HTML do site — a data do post em _layouts/post.html
+   usa um style inline em vez dessa classe. Se quiser, no
+   próximo passo dá pra editar o post.html para usar essa
+   classe no lugar do inline style (mais fácil de manter). */
 
 .yt-embed {
   width: 100%;
@@ -109,10 +117,17 @@ img {
 
 /* =========================
    GALERIA E COLUNAS
+   ---------------------------------------------------------
+   O efeito "mosaico" (tipo Pinterest) é feito só com CSS,
+   usando column-count para dividir a galeria em colunas. Cada
+   imagem "flui" para a próxima coluna disponível, sem precisar
+   de JavaScript para calcular posição — mais leve e simples.
+   A quantidade de colunas muda por página/tamanho de tela nas
+   media queries logo abaixo.
 ========================= */
 .galeria {
-  column-count: 2;
-  column-gap: 20px;
+  column-count: 2;   /* padrão: 2 colunas (ajustado nas media queries) */
+  column-gap: 20px;  /* espaço horizontal entre colunas */
   padding-top: 20px;
 }
 
@@ -121,6 +136,9 @@ img {
   width: 100%;
   vertical-align: top;
   margin: 0 0 20px 0;
+  /* As três linhas abaixo impedem uma imagem de ser "cortada"
+     entre duas colunas (break-inside é o padrão atual;
+     as outras duas são para navegadores mais antigos/Safari). */
   break-inside: avoid;
   -webkit-column-break-inside: avoid;
   page-break-inside: avoid;
@@ -128,30 +146,39 @@ img {
 
 /* =========================
    RESPONSIVIDADE (MEDIA QUERIES)
+   ---------------------------------------------------------
+   1100px é o "corte" oficial do site entre mobile/tablet e
+   desktop. É o mesmo valor verificado no script.js para
+   decidir se o Lightbox deve ou não ser ativado ao clicar
+   numa imagem — os dois lugares precisam ficar sincronizados.
 ========================= */
 
 /* Dispositivos móveis (Telas Menores) */
 @media (max-width: 1100px) {
   .galeria {
-    column-count: 1;
+    column-count: 1; /* galeria em coluna única no celular */
   }
   .container {
-    padding: 10px;
+    padding: 10px; /* menos espaço nas laterais em telas pequenas */
   }
 }
 
 /* Desktop e Telas Largas (1100px ou mais) */
 @media (min-width: 1100px) {
+  /* Usado na página Archive: container mais largo que o padrão */
   .container--wide-desktop {
     max-width: 1500px;
     padding-left: 30px;
     padding-right: 30px;
   }
 
+  /* Página Archive (.pagina-pb): 3 colunas no desktop */
   .pagina-pb .galeria {
     column-count: 3;
   }
 
+  /* Página inicial (.galeria--index): 1 coluna só, mesmo no desktop
+     (a galeria de destaque é exibida "empilhada", não em mosaico) */
   .galeria--index .galeria {
     column-count: 1;
   }
@@ -176,6 +203,14 @@ img {
 
 /* =========================
    LIGHTBOX (APENAS DESKTOP - 1100px ou mais)
+   ---------------------------------------------------------
+   Estrutura visual do modal que amplia a imagem clicada
+   (a lógica de abrir/fechar/navegar fica no script.js).
+   Por padrão fica escondida (display: none); só é exibida
+   dentro da media query (min-width: 1100px) mais abaixo,
+   e mesmo assim só quando ganha a classe ".ativo" via JS.
+   Em telas menores o recurso é desativado de propósito, tanto
+   aqui quanto no script.js, para simplificar o uso no celular.
 ========================= */
 .lightbox-overlay {
   display: none;
@@ -257,6 +292,9 @@ img {
 
 /* =========================
    ESTILO PARA TABELAS
+   ---------------------------------------------------------
+   Estiliza tabelas usadas dentro do conteúdo dos posts do
+   blog (ex.: _posts/2026-09-18-markdowntests.md).
 ========================= */
 table {
   width: auto; /* Faz a tabela se ajustar ao conteúdo */

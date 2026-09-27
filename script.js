@@ -1,28 +1,21 @@
 /* =========================
-   Header
-========================= */
-
-fetch('/header.html')
-  .then(response => response.text())
-  .then(data => {
-    document.getElementById('site-header').innerHTML = data;
-
-    // A frase só é carregada depois que o header existe na página
-    carregarFraseHeader();
-  });
-
-/* =========================
-   Footer
-========================= */
-
-fetch('/footer.html')
-  .then(response => response.text())
-  .then(data => {
-    document.getElementById('site-footer').innerHTML = data;
-  });
-
-  /* =========================
    Frase aleatória do header
+   ---------------------------------------------------------
+   O header (com a tag <p id="frase-header">) já vem pronto
+   dentro do HTML, inserido pelo Jekyll através do
+   {% include header.html %} em _layouts/default.html.
+
+   OBS: antes existia aqui um fetch('/header.html') e um
+   fetch('/footer.html') tentando montar o header/footer via
+   JavaScript e só then chamar carregarFraseHeader(). Isso era
+   resíduo de uma versão antiga do site (pré-Jekyll) e não
+   fazia mais sentido: a URL '/header.html' não existe no site
+   publicado e os elementos #site-header/#site-footer que o
+   código procurava também não existem. Na prática, isso gerava
+   um erro de JavaScript em toda página E impedia a frase
+   aleatória de aparecer (ela só era chamada dentro desse fetch
+   quebrado). Removido o fetch — agora é só esperar o DOM
+   carregar e sortear a frase direto.
 ========================= */
 
 const frases = [
@@ -73,27 +66,33 @@ const frases = [
   "Red deck wins.",
   "What is better? To be born good, or to overcome your evil nature through great effort?",
   "From the underground to the underground, since 2017 'til god knows when."
-  
 ];
-
-/* =========================
-   Carregar frase aleatória no header
-========================= */
 
 function carregarFraseHeader() {
   const fraseHeader = document.getElementById("frase-header");
 
+  // Se a página atual não tiver o elemento (não deveria acontecer,
+  // já que o header é global), simplesmente não faz nada.
   if (!fraseHeader) {
     return;
   }
 
   const indiceAleatorio = Math.floor(Math.random() * frases.length);
-
   fraseHeader.textContent = `"${frases[indiceAleatorio]}"`;
 }
 
+document.addEventListener("DOMContentLoaded", carregarFraseHeader);
+
 /* =========================
-   Embaralhar imagens da galeria
+   Embaralhar imagens da galeria (Home)
+   ---------------------------------------------------------
+   Usado nas galerias com a classe "galeria--random", hoje
+   apenas a galeria de destaque da página inicial. Reordena
+   aleatoriamente os elementos <img> que já existem no HTML
+   assim que a página carrega (algoritmo Fisher-Yates).
+
+   Se a página não tiver nenhum ".galeria--random", o
+   querySelectorAll simplesmente retorna vazio e nada acontece.
 ========================= */
 
 function embaralharElementos(container) {
@@ -115,18 +114,35 @@ function embaralharGalerias() {
 document.addEventListener("DOMContentLoaded", embaralharGalerias);
 
 /* =========================
-   SCRIPT PARA CARREGAMENTO INFINITO DE IMAGENS
+   CARREGAMENTO INFINITO DE IMAGENS (Archive)
+   ---------------------------------------------------------
+   Usado apenas na página Archive (elementos #galeria e
+   #sentinela). Diferente da galeria da Home, aqui as <img>
+   não existem no HTML — são criadas via JavaScript, em lotes
+   de 30, conforme o usuário se aproxima do fim da página
+   (Intersection Observer), em vez de carregar as 1068 de uma
+   vez só.
+
+   OTIMIZAÇÃO: antes esse bloco inteiro (gerar a lista de 1068
+   caminhos de imagem + embaralhar com Fisher-Yates) rodava em
+   TODA página do site, mesmo na Home, no Blog e nos posts, que
+   não têm essa galeria — era processamento jogado fora a cada
+   carregamento de página. Agora ele para logo no início caso
+   a página não tenha #galeria/#sentinela.
 ========================= */
 
 document.addEventListener("DOMContentLoaded", () => {
   const galeria = document.getElementById("galeria");
   const sentinela = document.getElementById("sentinela");
-  
-  // 1. Gera a lista de imagens dinamicamente (de 1 a 318)
+
+  // Página sem galeria de arquivo (Home, Blog, posts) → encerra aqui.
+  if (!galeria || !sentinela) return;
+
+  // 1. Gera a lista de imagens dinamicamente (de 1 a 1068)
   // ESSE NÚMERO É A ÚNICA COISA QUE DEVE SER ALTERADA CASO NOVAS IMAGENS SEJAM ADICIONADAS
   const totalImagens = 1068;
   const imagens = [];
-  
+
   for (let i = 1; i <= totalImagens; i++) {
     // Transforma "1" em "0001", "25" em "0025", etc.
     const numeroFormatado = i.toString().padStart(4, '0');
@@ -139,22 +155,24 @@ document.addEventListener("DOMContentLoaded", () => {
     [imagens[i], imagens[j]] = [imagens[j], imagens[i]];
   }
 
-  // 3. Configuração do carregamento infinito
+  // 3. Configuração do carregamento incremental
   let indiceAtual = 0;
   const quantidadePorVez = 30;
 
   function carregarMaisImagens() {
     // Calcula até onde o loop deve ir neste lote
     const limite = Math.min(indiceAtual + quantidadePorVez, imagens.length);
-    
+
     // Usar um fragmento melhora a performance ao inserir no DOM
+    // (um único reflow para o lote inteiro, em vez de um por imagem)
     const fragmento = document.createDocumentFragment();
 
     for (let i = indiceAtual; i < limite; i++) {
       const img = document.createElement("img");
       img.src = imagens[i];
       img.alt = `Imagem de arquivo`;
-      img.loading = "lazy"; // Garante carregamento suave
+      img.loading = "lazy";   // só baixa quando estiver perto da tela
+      img.decoding = "async"; // decodifica sem travar a renderização
       fragmento.appendChild(img);
     }
 
@@ -173,21 +191,32 @@ document.addEventListener("DOMContentLoaded", () => {
     if (entradas[0].isIntersecting) {
       carregarMaisImagens();
     }
-  }, { 
-    // rootMargin de "200px" faz com que comece a carregar 200px antes 
+  }, {
+    // rootMargin de "200px" faz com que comece a carregar 200px antes
     // de chegar no fim, evitando que o usuário veja a página vazia
-    rootMargin: "200px" 
+    rootMargin: "200px"
   });
 
-  // Inicia a observação
-  if (galeria && sentinela) {
-    observador.observe(sentinela);
-  }
+  observador.observe(sentinela);
 });
 
-// LIGHTBOX PARA AMPLIAR IMAGENS DA GALERIA (APENAS DESKTOP) ------------------------------------------
+/* =========================
+   LIGHTBOX PARA AMPLIAR IMAGENS DA GALERIA (APENAS DESKTOP)
+   ---------------------------------------------------------
+   Cria o modal de lightbox uma única vez e usa delegação de
+   eventos (clique no <body>) para funcionar tanto com as
+   imagens que já existem na página quanto com as que são
+   adicionadas depois pelo carregamento infinito do Archive.
+   Desativado em telas <= 1100px (ver style.css).
+
+   OTIMIZAÇÃO: se a página não tem nenhuma ".galeria" (ex.:
+   Blog, post individual), não faz sentido injetar o HTML do
+   lightbox nem registrar os listeners — encerra logo no início.
+========================= */
 
 document.addEventListener("DOMContentLoaded", () => {
+  if (!document.querySelector(".galeria")) return;
+
   // Cria a estrutura HTML do Lightbox dinamicamente
   const lightboxHTML = `
     <div class="lightbox-overlay" id="lightbox">
@@ -199,7 +228,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <button class="lightbox-botao lightbox-proxima">&#10095;</button>
     </div>
   `;
-  
+
   document.body.insertAdjacentHTML('beforeend', lightboxHTML);
 
   const lightbox = document.getElementById("lightbox");
@@ -211,15 +240,16 @@ document.addEventListener("DOMContentLoaded", () => {
   let imagensGaleria = [];
   let indiceAtual = 0;
 
-  // Usa delegação de eventos no documento para pegar imagens atuais e futuras (infinite scroll)
+  // Delegação de eventos no documento pega imagens atuais e futuras
+  // (necessário por causa do carregamento infinito do Archive)
   document.addEventListener("click", (e) => {
-    // Se a tela for menor ou igual a 1100px (Mobile/Tablet), o Lightbox não é acionado
+    // Em telas <= 1100px (Mobile/Tablet), o Lightbox não é acionado
     if (window.innerWidth <= 1100) return;
 
     if (e.target.tagName === "IMG" && e.target.closest(".galeria")) {
       const imgClicada = e.target;
       const galeriaPai = imgClicada.closest(".galeria");
-      
+
       // Pega todas as imagens daquela galeria específica naquele exato momento
       imagensGaleria = Array.from(galeriaPai.querySelectorAll("img"));
       indiceAtual = imagensGaleria.indexOf(imgClicada);
@@ -272,7 +302,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Navegação por teclado (Setas esquerda/direita e ESC para fechar)
   document.addEventListener("keydown", (e) => {
     if (!lightbox.classList.contains("ativo")) return;
-    
+
     if (e.key === "Escape") fecharLightbox();
     if (e.key === "ArrowRight") proximaImagem();
     if (e.key === "ArrowLeft") imagemAnterior();
