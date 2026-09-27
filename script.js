@@ -1,21 +1,20 @@
 /* =========================
    Frase aleatória do header
    ---------------------------------------------------------
-   O header (com a tag <p id="frase-header">) já vem pronto
-   dentro do HTML, inserido pelo Jekyll através do
-   {% include header.html %} em _layouts/default.html.
-
    OBS: antes existia aqui um fetch('/header.html') e um
-   fetch('/footer.html') tentando montar o header/footer via
-   JavaScript e só then chamar carregarFraseHeader(). Isso era
-   resíduo de uma versão antiga do site (pré-Jekyll) e não
-   fazia mais sentido: a URL '/header.html' não existe no site
-   publicado e os elementos #site-header/#site-footer que o
-   código procurava também não existem. Na prática, isso gerava
-   um erro de JavaScript em toda página E impedia a frase
-   aleatória de aparecer (ela só era chamada dentro desse fetch
-   quebrado). Removido o fetch — agora é só esperar o DOM
-   carregar e sortear a frase direto.
+   fetch('/footer.html') para montar o header/footer via
+   JavaScript. Isso era resíduo de uma versão antiga do site:
+   hoje o Jekyll já insere o header e o footer prontos no HTML
+   através do {% include %} em _layouts/default.html.
+
+   Esse fetch antigo sempre falhava (a URL não existe mais) e
+   tentava escrever dentro de elementos #site-header/#site-footer
+   que também não existem — ou seja, gerava erro no console em
+   todas as páginas E, como a função carregarFraseHeader() só
+   era chamada dentro desse fetch quebrado, a frase aleatória do
+   topo nunca era exibida de verdade. Removido o fetch; a frase
+   agora é sorteada assim que a página carrega (ver o final desta
+   seção).
 ========================= */
 
 const frases = [
@@ -68,31 +67,34 @@ const frases = [
   "From the underground to the underground, since 2017 'til god knows when."
 ];
 
+/* =========================
+   Carregar frase aleatória no header
+========================= */
+
 function carregarFraseHeader() {
   const fraseHeader = document.getElementById("frase-header");
 
-  // Se a página atual não tiver o elemento (não deveria acontecer,
-  // já que o header é global), simplesmente não faz nada.
   if (!fraseHeader) {
     return;
   }
 
   const indiceAleatorio = Math.floor(Math.random() * frases.length);
+
   fraseHeader.textContent = `"${frases[indiceAleatorio]}"`;
 }
 
+// O header já vem pronto no HTML (inserido pelo Jekyll), então
+// basta esperar o DOM carregar para sortear e exibir a frase.
 document.addEventListener("DOMContentLoaded", carregarFraseHeader);
 
 /* =========================
-   Embaralhar imagens da galeria (Home)
+   Embaralhar imagens da galeria
    ---------------------------------------------------------
-   Usado nas galerias com a classe "galeria--random", hoje
-   apenas a galeria de destaque da página inicial. Reordena
-   aleatoriamente os elementos <img> que já existem no HTML
-   assim que a página carrega (algoritmo Fisher-Yates).
-
-   Se a página não tiver nenhum ".galeria--random", o
-   querySelectorAll simplesmente retorna vazio e nada acontece.
+   Usado nas galerias com a classe "galeria--random" que já
+   nascem prontas no HTML (ex.: galeria da página inicial).
+   Reordena os elementos <img> existentes assim que a página
+   carrega. Não é usado pela galeria da página Archive, que é
+   montada dinamicamente (ver seção de carregamento infinito).
 ========================= */
 
 function embaralharElementos(container) {
@@ -114,28 +116,34 @@ function embaralharGalerias() {
 document.addEventListener("DOMContentLoaded", embaralharGalerias);
 
 /* =========================
-   CARREGAMENTO INFINITO DE IMAGENS (Archive)
+   SCRIPT PARA CARREGAMENTO INFINITO DE IMAGENS (PÁGINA ARCHIVE)
    ---------------------------------------------------------
    Usado apenas na página Archive (elementos #galeria e
-   #sentinela). Diferente da galeria da Home, aqui as <img>
-   não existem no HTML — são criadas via JavaScript, em lotes
-   de 30, conforme o usuário se aproxima do fim da página
-   (Intersection Observer), em vez de carregar as 1068 de uma
-   vez só.
+   #sentinela). As <img> não existem no HTML — são criadas via
+   JavaScript, em lotes, conforme o usuário rola a página.
 
-   OTIMIZAÇÃO: antes esse bloco inteiro (gerar a lista de 1068
-   caminhos de imagem + embaralhar com Fisher-Yates) rodava em
-   TODA página do site, mesmo na Home, no Blog e nos posts, que
-   não têm essa galeria — era processamento jogado fora a cada
-   carregamento de página. Agora ele para logo no início caso
-   a página não tenha #galeria/#sentinela.
+   IMPORTANTE - correção de um bug:
+   Antes a "galeria" era um único container com CSS
+   "column-count" (efeito de colunas tipo mosaico). O problema é
+   que "column-count" tenta balancear a altura das colunas toda
+   vez que um elemento novo é adicionado — ou seja, a cada lote
+   de 30 fotos carregado, o navegador recalculava a posição de
+   TODAS as imagens (inclusive as que já estavam na tela),
+   deixando tudo bagunçado por um instante.
+
+   A solução foi trocar por colunas de verdade (<div> criadas
+   aqui), cada uma funcionando como uma coluna independente via
+   flexbox (ver ".galeria--colunas" no style.css). Cada imagem
+   nova é sempre adicionada ao FINAL da coluna mais curta no
+   momento — as imagens que já estavam na tela nunca se movem.
 ========================= */
 
 document.addEventListener("DOMContentLoaded", () => {
   const galeria = document.getElementById("galeria");
   const sentinela = document.getElementById("sentinela");
 
-  // Página sem galeria de arquivo (Home, Blog, posts) → encerra aqui.
+  // Se a página atual não tiver #galeria/#sentinela (ex.: home,
+  // blog), não há nada para fazer aqui.
   if (!galeria || !sentinela) return;
 
   // 1. Gera a lista de imagens dinamicamente (de 1 a 1068)
@@ -155,7 +163,32 @@ document.addEventListener("DOMContentLoaded", () => {
     [imagens[i], imagens[j]] = [imagens[j], imagens[i]];
   }
 
-  // 3. Configuração do carregamento incremental
+  // 3. Cria as colunas reais que vão receber as imagens.
+  // O número de colunas segue o mesmo ponto de quebra usado no
+  // style.css para a página Archive (3 colunas a partir de
+  // 1100px, 1 coluna abaixo disso). Isso é decidido só uma vez,
+  // ao carregar a página (não se ajusta se a janela for
+  // redimensionada depois).
+  const numeroColunas = window.matchMedia("(min-width: 1100px)").matches ? 3 : 1;
+  const colunas = [];
+
+  galeria.classList.add("galeria--colunas");
+  for (let i = 0; i < numeroColunas; i++) {
+    const coluna = document.createElement("div");
+    coluna.className = "coluna-galeria";
+    galeria.appendChild(coluna);
+    colunas.push(coluna);
+  }
+
+  // Retorna a coluna com menor altura atual, para equilibrar o
+  // "mosaico" à medida que novas imagens entram.
+  function colunaMaisCurta() {
+    return colunas.reduce((menor, atual) =>
+      atual.offsetHeight < menor.offsetHeight ? atual : menor
+    );
+  }
+
+  // 4. Configuração do carregamento infinito
   let indiceAtual = 0;
   const quantidadePorVez = 30;
 
@@ -163,20 +196,18 @@ document.addEventListener("DOMContentLoaded", () => {
     // Calcula até onde o loop deve ir neste lote
     const limite = Math.min(indiceAtual + quantidadePorVez, imagens.length);
 
-    // Usar um fragmento melhora a performance ao inserir no DOM
-    // (um único reflow para o lote inteiro, em vez de um por imagem)
-    const fragmento = document.createDocumentFragment();
-
     for (let i = indiceAtual; i < limite; i++) {
       const img = document.createElement("img");
       img.src = imagens[i];
-      img.alt = `Imagem de arquivo`;
-      img.loading = "lazy";   // só baixa quando estiver perto da tela
-      img.decoding = "async"; // decodifica sem travar a renderização
-      fragmento.appendChild(img);
+      img.alt = "Imagem de arquivo";
+      img.loading = "lazy"; // Garante carregamento suave
+      // Guarda a posição original (antes de ser distribuída nas
+      // colunas) para o lightbox conseguir navegar em "anterior/
+      // próxima" respeitando a ordem certa - ver seção do lightbox.
+      img.dataset.index = i;
+      colunaMaisCurta().appendChild(img);
     }
 
-    galeria.appendChild(fragmento);
     indiceAtual = limite;
 
     // Se todas as imagens foram carregadas, para de observar a sentinela
@@ -185,7 +216,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // 4. Observa a rolagem para ativar o carregamento
+  // 5. Observa a rolagem para ativar o carregamento
   const observador = new IntersectionObserver((entradas) => {
     // Quando a div #sentinela aparecer na tela, carrega mais fotos
     if (entradas[0].isIntersecting) {
@@ -204,19 +235,13 @@ document.addEventListener("DOMContentLoaded", () => {
    LIGHTBOX PARA AMPLIAR IMAGENS DA GALERIA (APENAS DESKTOP)
    ---------------------------------------------------------
    Cria o modal de lightbox uma única vez e usa delegação de
-   eventos (clique no <body>) para funcionar tanto com as
+   eventos (clique no documento) para funcionar tanto com as
    imagens que já existem na página quanto com as que são
-   adicionadas depois pelo carregamento infinito do Archive.
+   adicionadas depois pelo infinite scroll do Archive.
    Desativado em telas <= 1100px (ver style.css).
-
-   OTIMIZAÇÃO: se a página não tem nenhuma ".galeria" (ex.:
-   Blog, post individual), não faz sentido injetar o HTML do
-   lightbox nem registrar os listeners — encerra logo no início.
 ========================= */
 
 document.addEventListener("DOMContentLoaded", () => {
-  if (!document.querySelector(".galeria")) return;
-
   // Cria a estrutura HTML do Lightbox dinamicamente
   const lightboxHTML = `
     <div class="lightbox-overlay" id="lightbox">
@@ -240,18 +265,27 @@ document.addEventListener("DOMContentLoaded", () => {
   let imagensGaleria = [];
   let indiceAtual = 0;
 
-  // Delegação de eventos no documento pega imagens atuais e futuras
-  // (necessário por causa do carregamento infinito do Archive)
+  // Usa delegação de eventos no documento para pegar imagens atuais e futuras (infinite scroll)
   document.addEventListener("click", (e) => {
-    // Em telas <= 1100px (Mobile/Tablet), o Lightbox não é acionado
+    // Se a tela for menor ou igual a 1100px (Mobile/Tablet), o Lightbox não é acionado
     if (window.innerWidth <= 1100) return;
 
     if (e.target.tagName === "IMG" && e.target.closest(".galeria")) {
       const imgClicada = e.target;
       const galeriaPai = imgClicada.closest(".galeria");
 
-      // Pega todas as imagens daquela galeria específica naquele exato momento
-      imagensGaleria = Array.from(galeriaPai.querySelectorAll("img"));
+      // Pega todas as imagens daquela galeria e ordena pela posição
+      // original (data-index). Isso é necessário porque, na página
+      // Archive, as imagens agora ficam agrupadas por coluna no HTML
+      // (ver seção de carregamento infinito) e não na ordem
+      // sequencial de carregamento. Em galerias sem data-index (ex.:
+      // a da home), o sort não altera nada, então a ordem visual
+      // original é mantida normalmente.
+      imagensGaleria = Array.from(galeriaPai.querySelectorAll("img")).sort((a, b) => {
+        const indexA = a.dataset.index !== undefined ? Number(a.dataset.index) : 0;
+        const indexB = b.dataset.index !== undefined ? Number(b.dataset.index) : 0;
+        return indexA - indexB;
+      });
       indiceAtual = imagensGaleria.indexOf(imgClicada);
 
       if (indiceAtual !== -1) {
