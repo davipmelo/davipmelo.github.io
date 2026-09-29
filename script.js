@@ -19,7 +19,7 @@
 
 const frases = [
   "There's nothing more precious than time.",
-  "Virgil Was Here.",
+  "Virgil was here.",
   "The world produces waves. Surf or drown, you decide.",
   "I did it for me. I liked it. I was good at it. And... I was alive.",
   "The impossible is possible.",
@@ -64,6 +64,14 @@ const frases = [
   "Follow the white rabbit.",
   "Red deck wins.",
   "What is better? To be born good, or to overcome your evil nature through great effort?",
+  "Look around, Ted. You're all alone.",
+  "I went to dm's website and all I got was this f**king quote.",
+  "In a space where there is no room, in a structure that was never built, meets the guild that doesn't exist.",
+  "The cycle of life and death continues. We will live, they will die.",
+  "Spiritual healing.",
+  "Reading the card explains the card.",
+  "A real artist flirts with failure daily.",
+  "Enter the labyrinth...",
   "From the underground to the underground, since 2017 'til god knows when."
 ];
 

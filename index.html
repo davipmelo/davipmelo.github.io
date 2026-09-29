@@ -42,7 +42,7 @@ container_class: "galeria--index"
      página (função embaralharGalerias()).
 ========================================================== -->
 <div class="galeria galeria--random">
-  {% for i in (1..30) %}
+  {% for i in (1..33) %}
     {% assign numero = i | prepend: '000' | slice: -3, 3 %}
     <img src="/img/portfolio/{{ numero }}.jpg" alt="Imagem {{ i }}" loading="lazy">
   {% endfor %}
