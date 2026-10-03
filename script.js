@@ -87,9 +87,9 @@ const frases = [
   "Horizontal is always better.",
   "The best or nothing.",
   "Some may call this junk. Me, I call them treasures!",
-  "*Gludio theme playing softly in the background*",
-  "*Grand Chase main menu theme playing softly in the background*",
-  "*Far Horizons playing softly in the background*",
+  "Gludio theme playing softly in the background.",
+  "Grand Chase main menu theme playing softly in the background.",
+  "Far Horizons playing softly in the background.",
   "There's no place better than Gludio.",
   "This is my own private domicile and I will not be harassed... bitch!",
   "From the underground to the underground, since 2017 'til god knows when."
