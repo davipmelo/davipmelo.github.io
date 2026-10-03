@@ -84,6 +84,7 @@ const frases = [
   "A guy opens his door and gets shot, and you think that of me?",
   "Ignorance is bliss.",
   "Analog is always better.",
+  "Horizontal is always better.",
   "The best or nothing.",
   "Some may call this junk. Me, I call them treasures!",
   "*Gludio theme playing softly in the background*",
