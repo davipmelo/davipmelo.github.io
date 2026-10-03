@@ -92,6 +92,9 @@ const frases = [
   "Far Horizons playing softly in the background.",
   "There's no place better than Gludio.",
   "This is my own private domicile and I will not be harassed... bitch!",
+  "I miss the 2017 SK Gaming.",
+  "In a long distance relationship with the city of Milan.",
+  "A lot can change if you reload the page...",
   "From the underground to the underground, since 2017 'til god knows when."
 ];
 
