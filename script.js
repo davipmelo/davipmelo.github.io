@@ -78,7 +78,7 @@ const frases = [
   "All those moments will be lost in time, like tears in rain.",
   "If you're reading this it's too late.",
   "WORK IN PROGRESS",
-  "Ah shit, here we go again",
+  "Ah shit, here we go again.",
   "Grove Street. Home.",
   "I'll have two number 9s, a number 9 large, a number 6 with extra dip, a number 7, two number 45s, one with cheese, and a large soda.",
   "A guy opens his door and gets shot, and you think that of me?",
@@ -90,6 +90,7 @@ const frases = [
   "*Grand Chase main menu theme playing softly in the background*",
   "*Far Horizons playing softly in the background*",
   "There's no place better than Gludio.",
+  "This is my own private domicile and I will not be harassed... bitch!",
   "From the underground to the underground, since 2017 'til god knows when."
 ];
 
