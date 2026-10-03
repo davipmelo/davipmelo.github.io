@@ -85,6 +85,11 @@ const frases = [
   "Ignorance is bliss.",
   "Analog is always better.",
   "The best or nothing.",
+  "Some may call this junk. Me, I call them treasures!",
+  "*Gludio theme playing softly in the background*",
+  "*Grand Chase main menu theme playing softly in the background*",
+  "*Far Horizons playing softly in the background*",
+  "There's no place better than Gludio.",
   "From the underground to the underground, since 2017 'til god knows when."
 ];
 
