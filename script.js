@@ -95,6 +95,8 @@ const frases = [
   "I miss the 2017 SK Gaming.",
   "In a long distance relationship with the city of Milan.",
   "A lot can change if you reload the page...",
+  "The shortest poem is a name.",
+  "In my restless dreams, I see that town.",
   "From the underground to the underground, since 2017 'til god knows when."
 ];
 
