@@ -97,6 +97,7 @@ const frases = [
   "A lot can change if you reload the page...",
   "The shortest poem is a name.",
   "In my restless dreams, I see that town.",
+  "They are minerals, Marie!",
   "From the underground to the underground, since 2017 'til god knows when."
 ];
 
