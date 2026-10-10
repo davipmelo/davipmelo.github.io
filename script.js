@@ -98,6 +98,7 @@ const frases = [
   "The shortest poem is a name.",
   "In my restless dreams, I see that town.",
   "They are minerals, Marie!",
+  "As the sky opened up, we ran for shelter. Halfway there I came to the sudden realization that, already soaked, there might be more to gain from experiencing the rain than running from it.",
   "From the underground to the underground, since 2017 'til god knows when."
 ];
 
