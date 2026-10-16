@@ -152,43 +152,27 @@ document.addEventListener("DOMContentLoaded", embaralharGalerias);
 
 /* =========================
    SCRIPT PARA CARREGAMENTO INFINITO DE IMAGENS (PÁGINA ARCHIVE)
-   ---------------------------------------------------------
-   Usado apenas na página Archive (elementos #galeria e
-   #sentinela). As <img> são criadas via JavaScript, em lotes,
-   conforme o usuário rola a página.
-
-   As imagens são distribuídas de forma alternada (round-robin)
-   entre as colunas reais (<div> com flexbox). Isso garante que
-   todas as colunas sejam preenchidas por igual e que novas fotos
-   sejam inseridas sempre no final, abaixo das fotos já existentes,
-   SEM NUNCA ALTERAR A ORDEM nem reposicionar o que já está na tela.
 ========================= */
 
 document.addEventListener("DOMContentLoaded", () => {
   const galeria = document.getElementById("galeria");
   const sentinela = document.getElementById("sentinela");
 
-  // Se a página atual não tiver #galeria/#sentinela (ex.: home, blog), não há nada a fazer.
   if (!galeria || !sentinela) return;
 
-  // 1. Gera a lista de imagens dinamicamente (de 1 a 1068)
-  // ESSE NÚMERO É A ÚNICA COISA QUE DEVE SER ALTERADA CASO NOVAS IMAGENS SEJAM ADICIONADAS
   const totalImagens = 1068;
   const imagens = [];
 
   for (let i = 1; i <= totalImagens; i++) {
-    // Transforma "1" em "0001", "25" em "0025", etc.
     const numeroFormatado = i.toString().padStart(4, '0');
     imagens.push(`/img/archive/arch-${numeroFormatado}.jpg`);
   }
 
-  // 2. Randomiza (embaralha) a ordem das imagens - Algoritmo Fisher-Yates
   for (let i = imagens.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [imagens[i], imagens[j]] = [imagens[j], imagens[i]];
   }
 
-  // 3. Criação e gerenciamento das colunas
   function obterNumeroColunas() {
     return window.matchMedia("(min-width: 1100px)").matches ? 3 : 1;
   }
@@ -209,7 +193,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   criarColunas(obterNumeroColunas());
 
-  // 4. Configuração do carregamento infinito
   let indiceAtual = 0;
   const quantidadePorVez = 30;
   let carregando = false;
@@ -218,21 +201,36 @@ document.addEventListener("DOMContentLoaded", () => {
     if (carregando || indiceAtual >= imagens.length) return;
     carregando = true;
 
-    // Calcula até onde o loop deve ir neste lote
     const limite = Math.min(indiceAtual + quantidadePorVez, imagens.length);
+
+    // Mapeia a altura real de cada coluna em pixels antes de inserir o novo lote
+    const alturasColunas = colunas.map(col => col.offsetHeight);
 
     for (let i = indiceAtual; i < limite; i++) {
       const img = document.createElement("img");
       img.src = imagens[i];
       img.alt = "Imagem de arquivo";
-      img.loading = "lazy"; // Carregamento sob demanda pelo navegador
-      // Guarda a posição original no dataset para navegação do lightbox
+      img.loading = "lazy";
       img.dataset.index = i;
 
-      // Distribuição round-robin: cada imagem vai para a próxima coluna sequencialmente.
-      // Isso preenche todas as colunas de forma homogênea e coloca as fotos novas
-      // estritamente abaixo das já carregadas, sem alterar a ordem das existentes.
-      colunas[i % colunas.length].appendChild(img);
+      // Descobre qual coluna está mais curta no momento
+      let indiceMenorColuna = 0;
+      let menorAltura = alturasColunas[0];
+      
+      for (let j = 1; j < alturasColunas.length; j++) {
+        if (alturasColunas[j] < menorAltura) {
+          menorAltura = alturasColunas[j];
+          indiceMenorColuna = j;
+        }
+      }
+
+      // Adiciona a imagem na coluna mais curta para equilibrar o visual
+      colunas[indiceMenorColuna].appendChild(img);
+
+      // Como a imagem acabou de ser criada e ainda vai baixar (tem altura zero no DOM),
+      // somamos um "peso" estimado (ex: 300px) à altura daquela coluna para que 
+      // o loop não jogue todas as imagens do lote na mesma coluna por acidente.
+      alturasColunas[indiceMenorColuna] += 300;
     }
 
     indiceAtual = limite;
@@ -244,7 +242,6 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Libera a trava e verifica se a tela precisa de mais um lote (ex.: telas grandes)
     setTimeout(() => {
       carregando = false;
       checarProximidadeSentinela();
@@ -254,13 +251,11 @@ document.addEventListener("DOMContentLoaded", () => {
   function checarProximidadeSentinela() {
     if (carregando || indiceAtual >= imagens.length) return;
     const rect = sentinela.getBoundingClientRect();
-    // Se a sentinela estiver a 800px ou menos da parte inferior da tela, carrega mais um lote
     if (rect.top <= window.innerHeight + 800) {
       carregarMaisImagens();
     }
   }
 
-  // 5. IntersectionObserver para carregar o lote quando estiver próximo ao fim
   const observador = new IntersectionObserver((entradas) => {
     entradas.forEach((entrada) => {
       if (entrada.isIntersecting) {
@@ -268,17 +263,13 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }, {
-    // rootMargin de "800px" antecipa o carregamento enquanto o usuário chega perto do fim
     rootMargin: "800px"
   });
 
   observador.observe(sentinela);
-
-  // Monitora a rolagem para garantir carregamento contínuo em qualquer circunstância
   window.addEventListener("scroll", checarProximidadeSentinela, { passive: true });
 
-  // Se o usuário redimensionar a janela mudando a quantidade de colunas,
-  // redistribui apenas as imagens já carregadas preservando 100% da ordem
+  // Evento de resize aprimorado: ao redimensionar a janela, usa as proporções reais das imagens 
   window.addEventListener("resize", () => {
     const qtdDesejada = obterNumeroColunas();
     if (qtdDesejada !== colunas.length) {
@@ -286,13 +277,31 @@ document.addEventListener("DOMContentLoaded", () => {
         return Number(a.dataset.index) - Number(b.dataset.index);
       });
       criarColunas(qtdDesejada);
-      todasImagens.forEach((img, i) => {
-        colunas[i % colunas.length].appendChild(img);
+      
+      const alturasColunas = new Array(qtdDesejada).fill(0);
+
+      todasImagens.forEach((img) => {
+        let indiceMenor = 0;
+        let menorAltura = alturasColunas[0];
+        for (let j = 1; j < alturasColunas.length; j++) {
+          if (alturasColunas[j] < menorAltura) {
+            menorAltura = alturasColunas[j];
+            indiceMenor = j;
+          }
+        }
+        
+        colunas[indiceMenor].appendChild(img);
+        
+        // Se a imagem já foi carregada, pega a proporção exata para calcular o peso no layout
+        const proporcao = (img.naturalHeight && img.naturalWidth) 
+          ? (img.naturalHeight / img.naturalWidth) 
+          : 1.5;
+          
+        alturasColunas[indiceMenor] += proporcao;
       });
     }
   });
 
-  // Carrega o primeiro lote imediatamente
   carregarMaisImagens();
 });
 
