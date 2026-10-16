@@ -314,3 +314,18 @@ th {
   background-color: rgba(255, 255, 255, 0.05);
   color: var(--link-color);
 }
+
+/* =========================
+   ANIMAÇÃO DE FADE IN (ARCHIVE)
+========================= */
+#galeria.galeria--colunas img {
+  opacity: 0;
+  transform: translateY(15px); /* Dá um leve efeito da imagem subindo */
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  will-change: opacity, transform;
+}
+
+#galeria.galeria--colunas img.aparecer {
+  opacity: 1;
+  transform: translateY(0);
+}
