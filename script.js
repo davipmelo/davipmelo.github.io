@@ -197,55 +197,99 @@ document.addEventListener("DOMContentLoaded", () => {
   const quantidadePorVez = 30;
   let carregando = false;
 
+  function indiceColunaMaisCurta() {
+    let indiceMenor = 0;
+    let menorAltura = colunas[0].offsetHeight;
+
+    for (let j = 1; j < colunas.length; j++) {
+      if (colunas[j].offsetHeight < menorAltura) {
+        menorAltura = colunas[j].offsetHeight;
+        indiceMenor = j;
+      }
+    }
+
+    // Se as alturas forem iguais (comum no início ou imagens ainda não renderizadas),
+    // escolhemos a coluna que tem menos elementos dentro.
+    if (colunas.every(c => c.offsetHeight === menorAltura)) {
+      let minItens = colunas[0].children.length;
+      indiceMenor = 0;
+      for (let j = 1; j < colunas.length; j++) {
+        if (colunas[j].children.length < minItens) {
+          minItens = colunas[j].children.length;
+          indiceMenor = j;
+        }
+      }
+    }
+
+    return indiceMenor;
+  }
+
+  function encaixarImagem(img, animar = true) {
+    const indice = indiceColunaMaisCurta();
+    colunas[indice].appendChild(img);
+
+    if (animar) {
+      // Forçamos o navegador a processar o layout antes de animar
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          img.classList.add("aparecer");
+        });
+      });
+    } else {
+      img.classList.add("aparecer");
+    }
+  }
+
   function carregarMaisImagens() {
     if (carregando || indiceAtual >= imagens.length) return;
     carregando = true;
 
     const limite = Math.min(indiceAtual + quantidadePorVez, imagens.length);
+    let processadasNestaLeva = 0;
+    const totalDestaLeva = limite - indiceAtual;
 
-    // Mapeia a altura real de cada coluna em pixels antes de inserir o novo lote
-    const alturasColunas = colunas.map(col => col.offsetHeight);
+    const verificarFimDaLeva = () => {
+      processadasNestaLeva++;
+      if (processadasNestaLeva >= totalDestaLeva) {
+        carregando = false;
+        // Verifica se o sentinela ainda está visível (ex: telas 4k)
+        setTimeout(checarProximidadeSentinela, 300);
+      }
+    };
 
     for (let i = indiceAtual; i < limite; i++) {
       const img = document.createElement("img");
-      img.src = imagens[i];
       img.alt = "Imagem de arquivo";
-      img.loading = "lazy";
-      img.dataset.index = i;
-
-      // Descobre qual coluna está mais curta no momento
-      let indiceMenorColuna = 0;
-      let menorAltura = alturasColunas[0];
+      img.dataset.index = String(i);
+      img.decoding = "async";
       
-      for (let j = 1; j < alturasColunas.length; j++) {
-        if (alturasColunas[j] < menorAltura) {
-          menorAltura = alturasColunas[j];
-          indiceMenorColuna = j;
-        }
+      const fonte = imagens[i];
+
+      const aoFinalizar = () => {
+        if (img.dataset.carregada === "true") return;
+        img.dataset.carregada = "true";
+        encaixarImagem(img);
+        verificarFimDaLeva();
+      };
+
+      const aoFalhar = () => {
+        if (img.dataset.carregada === "true") return;
+        img.dataset.carregada = "true";
+        console.warn("Não foi possível carregar:", fonte);
+        verificarFimDaLeva();
+      };
+
+      img.onload = aoFinalizar;
+      img.onerror = aoFalhar;
+      img.src = fonte;
+
+      // Se já estiver no cache
+      if (img.complete && img.naturalWidth > 0) {
+        aoFinalizar();
       }
-
-      // Adiciona a imagem na coluna mais curta para equilibrar o visual
-      colunas[indiceMenorColuna].appendChild(img);
-
-      // Como a imagem acabou de ser criada e ainda vai baixar (tem altura zero no DOM),
-      // somamos um "peso" estimado (ex: 300px) à altura daquela coluna para que 
-      // o loop não jogue todas as imagens do lote na mesma coluna por acidente.
-      alturasColunas[indiceMenorColuna] += 300;
     }
 
     indiceAtual = limite;
-
-    if (indiceAtual >= imagens.length) {
-      if (observador) observador.unobserve(sentinela);
-      window.removeEventListener("scroll", checarProximidadeSentinela);
-      carregando = false;
-      return;
-    }
-
-    setTimeout(() => {
-      carregando = false;
-      checarProximidadeSentinela();
-    }, 150);
   }
 
   function checarProximidadeSentinela() {
@@ -269,7 +313,6 @@ document.addEventListener("DOMContentLoaded", () => {
   observador.observe(sentinela);
   window.addEventListener("scroll", checarProximidadeSentinela, { passive: true });
 
-  // Evento de resize aprimorado: ao redimensionar a janela, usa as proporções reais das imagens 
   window.addEventListener("resize", () => {
     const qtdDesejada = obterNumeroColunas();
     if (qtdDesejada !== colunas.length) {
@@ -277,28 +320,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return Number(a.dataset.index) - Number(b.dataset.index);
       });
       criarColunas(qtdDesejada);
-      
-      const alturasColunas = new Array(qtdDesejada).fill(0);
-
-      todasImagens.forEach((img) => {
-        let indiceMenor = 0;
-        let menorAltura = alturasColunas[0];
-        for (let j = 1; j < alturasColunas.length; j++) {
-          if (alturasColunas[j] < menorAltura) {
-            menorAltura = alturasColunas[j];
-            indiceMenor = j;
-          }
-        }
-        
-        colunas[indiceMenor].appendChild(img);
-        
-        // Se a imagem já foi carregada, pega a proporção exata para calcular o peso no layout
-        const proporcao = (img.naturalHeight && img.naturalWidth) 
-          ? (img.naturalHeight / img.naturalWidth) 
-          : 1.5;
-          
-        alturasColunas[indiceMenor] += proporcao;
-      });
+      todasImagens.forEach((img) => encaixarImagem(img, false));
     }
   });
 

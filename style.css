@@ -148,6 +148,7 @@ img {
    qualquer tamanho de tela. */
 #galeria.galeria--colunas {
   display: flex;
+  column-count: unset; /* anula o mosaic de .galeria para esta página */
   align-items: flex-start;
   gap: 20px;
 }
