@@ -191,6 +191,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Novo observador para o efeito de fade: a imagem só ganha a classe 'aparecer'
+  // quando realmente entra na área visível da tela.
+  const observadorFade = new IntersectionObserver((entradas) => {
+    entradas.forEach((entrada) => {
+      if (entrada.isIntersecting) {
+        // Pequeno atraso opcional para garantir a fluidez
+        requestAnimationFrame(() => {
+          entrada.target.classList.add("aparecer");
+        });
+        observadorFade.unobserve(entrada.target);
+      }
+    });
+  }, {
+    rootMargin: "0px 0px -50px 0px" // Dispara quando a imagem está 50px "dentro" da tela
+  });
+
   criarColunas(obterNumeroColunas());
 
   let indiceAtual = 0;
@@ -229,12 +245,7 @@ document.addEventListener("DOMContentLoaded", () => {
     colunas[indice].appendChild(img);
 
     if (animar) {
-      // Forçamos o navegador a processar o layout antes de animar
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          img.classList.add("aparecer");
-        });
-      });
+      observadorFade.observe(img);
     } else {
       img.classList.add("aparecer");
     }
