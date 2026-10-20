@@ -160,7 +160,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (!galeria || !sentinela) return;
 
-  const totalImagens = 1123;
+  const totalImagens = 1119;
   const imagens = [];
 
   for (let i = 1; i <= totalImagens; i++) {
