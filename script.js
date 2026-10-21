@@ -148,7 +148,55 @@ function embaralharGalerias() {
   galerias.forEach((galeria) => embaralharElementos(galeria));
 }
 
-document.addEventListener("DOMContentLoaded", embaralharGalerias);
+/* Observador compartilhado: a imagem só ganha a classe "aparecer"
+   quando realmente entra na área visível da tela. Usado tanto
+   nas imagens criadas aos poucos na Archive quanto nas que já
+   existem no HTML da página inicial. */
+function criarObservadorFade() {
+  const observadorFade = new IntersectionObserver((entradas) => {
+    entradas.forEach((entrada) => {
+      if (entrada.isIntersecting) {
+        requestAnimationFrame(() => {
+          entrada.target.classList.add("aparecer");
+        });
+        observadorFade.unobserve(entrada.target);
+      }
+    });
+  }, {
+    rootMargin: "0px 0px -50px 0px" // Dispara quando a imagem está 50px "dentro" da tela
+  });
+
+  return observadorFade;
+}
+
+function aplicarFadeGaleriaIndex() {
+  const galeria = document.querySelector(".galeria--index .galeria");
+
+  if (!galeria) {
+    return;
+  }
+
+  const observadorFade = criarObservadorFade();
+
+  // Na Archive as imagens só entram no DOM depois de carregar, então já
+  // têm altura real quando o observador as vê. Aqui elas já estão no HTML
+  // (muitas com loading="lazy"): sem altura, todas "cabem" no viewport e
+  // ganhariam "aparecer" de uma vez. Só observamos depois do load.
+  galeria.querySelectorAll("img").forEach((img) => {
+    const observarQuandoPronta = () => observadorFade.observe(img);
+
+    if (img.complete && img.naturalWidth > 0) {
+      observarQuandoPronta();
+    } else {
+      img.addEventListener("load", observarQuandoPronta, { once: true });
+    }
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  embaralharGalerias();
+  aplicarFadeGaleriaIndex();
+});
 
 /* =========================
    SCRIPT PARA CARREGAMENTO INFINITO DE IMAGENS (PÁGINA ARCHIVE)
@@ -191,21 +239,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Novo observador para o efeito de fade: a imagem só ganha a classe 'aparecer'
-  // quando realmente entra na área visível da tela.
-  const observadorFade = new IntersectionObserver((entradas) => {
-    entradas.forEach((entrada) => {
-      if (entrada.isIntersecting) {
-        // Pequeno atraso opcional para garantir a fluidez
-        requestAnimationFrame(() => {
-          entrada.target.classList.add("aparecer");
-        });
-        observadorFade.unobserve(entrada.target);
-      }
-    });
-  }, {
-    rootMargin: "0px 0px -50px 0px" // Dispara quando a imagem está 50px "dentro" da tela
-  });
+  const observadorFade = criarObservadorFade();
 
   criarColunas(obterNumeroColunas());
 

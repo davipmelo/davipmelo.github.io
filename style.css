@@ -317,16 +317,24 @@ th {
 }
 
 /* =========================
-   ANIMAÇÃO DE FADE IN (ARCHIVE)
+   ANIMAÇÃO DE FADE IN
+   ---------------------------------------------------------
+   Imagens começam invisíveis e só ganham a classe "aparecer"
+   quando entram na tela (IntersectionObserver em script.js).
+   Usada na galeria da Archive (colunas) e na da página inicial
+   (uma coluna). O layout de cada página continua definido
+   pelos blocos de galeria acima.
 ========================= */
-#galeria.galeria--colunas img {
+#galeria.galeria--colunas img,
+.galeria--index .galeria img {
   opacity: 0;
   transform: translateY(15px); /* Dá um leve efeito da imagem subindo */
   transition: opacity 0.6s ease-out, transform 0.6s ease-out;
   will-change: opacity, transform;
 }
 
-#galeria.galeria--colunas img.aparecer {
+#galeria.galeria--colunas img.aparecer,
+.galeria--index .galeria img.aparecer {
   opacity: 1;
   transform: translateY(0);
 }
