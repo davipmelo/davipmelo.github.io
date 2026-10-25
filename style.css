@@ -9,7 +9,10 @@
   --link-color: #ffbb00;
   --link-hover-color: #ffde83;
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --frase-tamanho: 16px;
+  --font-size-base: 15px;
+  --font-weight-body: 300;
+  --font-weight-bold: 600;
+  --frase-tamanho: 15px;
   --frase-cor: #6e6d6e;
   --frase-espacamento-linhas: 1.4;
   --frase-margem-superior: 0px;
@@ -33,6 +36,9 @@ body {
   background-color: var(--bg-page);
   color: var(--text-color);
   font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-body);
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -40,11 +46,15 @@ body {
 h1, h2, h3, h4, h5, h6 {
   margin: 0;
   padding: 0;
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
+}
+
+strong, b {
+  font-weight: var(--font-weight-bold);
 }
 
 p {
-  line-height: 1.5;
+  line-height: 1.6;
   margin-top: 0;
   margin-bottom: 0;
 }
@@ -92,6 +102,7 @@ img {
   margin: var(--frase-margem-superior) 0 var(--frase-margem-inferior);
   color: var(--frase-cor);
   font-size: var(--frase-tamanho);
+  font-weight: 400;
   line-height: var(--frase-espacamento-linhas);
   min-height: calc(var(--frase-tamanho) * var(--frase-espacamento-linhas));
   font-style: italic;
@@ -277,8 +288,7 @@ footer {
 
 .about-coluna-texto p {
   color: #dddddd;
-  line-height: 1.7;
-  font-size: 1.05rem;
+  line-height: 1.6;
 }
 
 .about-coluna-foto {
