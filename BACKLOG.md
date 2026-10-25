@@ -5,7 +5,6 @@ Esse é o backlog do projeto com algumas ideias que quero desenvolver e coisas q
 TO DO
 - Selecionar e ordenar fotos para o portfolio 2026!!!!!
 - Depois de selecionar fotos do portfolio, exportar todas no lightroom em um setup leve para melhorar carregamento da home
-- Achar uma fonte para o tema default do site (Helvetica parece meio sem sal...)
 - Alguma forma de voltar para a página "Blog" quando estou dentro de algum post
 
 IDEIAS
@@ -31,3 +30,4 @@ FEITO
 - Adicionar página "Inspo/Archive/Visual Library"
 - Adicionar página "Sobre Mim"
 - Alinhar o fundo da galeria de fotos de forma reta (equalização inteligente das últimas imagens)
+- Adotar a fonte Inter como padrão do site (substituindo Helvetica/Arial)
