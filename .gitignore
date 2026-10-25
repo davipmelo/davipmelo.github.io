@@ -1,4 +1,20 @@
+# Jekyll e builds locais
 _site/
 .sass-cache/
 .jekyll-cache/
 .jekyll-metadata
+
+# Anotações e rascunhos pessoais
+BACKLOG.md
+_drafts/
+
+# IDEs e ferramentas locais
+.ruby-lsp/
+.vscode/
+.idea/
+*.log
+
+# Arquivos de sistema operacional
+.DS_Store
+Thumbs.db
+desktop.ini
