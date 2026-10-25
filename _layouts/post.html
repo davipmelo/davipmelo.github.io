@@ -2,16 +2,11 @@
 layout: default
 ---
 <main>
-  <!-- Link de retorno adicionado aqui -->
-    <a href="/pages/blog.html" class="botao-voltar">Voltar para o blog</a>
+  <a href="/pages/blog.html" class="botao-voltar">Voltar para o blog</a>
   
   <article class="postagem-blog">
     <h1>{{ page.title }}</h1>
-    
-    <!-- Tag que puxa a data e formata como DD/MM/AAAA -->
-    <p style="font-size: 0.8rem; opacity: 0.6; margin-top: -10px; margin-bottom: 30px;">
-      {{ page.date | date: "%d/%m/%Y" }}
-    </p>
+    <p class="data-post">{{ page.date | date: "%d/%m/%Y" }}</p>
     
     <div class="conteudo-post">
       {{ content }}

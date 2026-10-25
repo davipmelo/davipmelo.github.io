@@ -1,22 +1,14 @@
-/* =========================
-   Frase aleatória do header
-   ---------------------------------------------------------
-   OBS: antes existia aqui um fetch('/header.html') e um
-   fetch('/footer.html') para montar o header/footer via
-   JavaScript. Isso era resíduo de uma versão antiga do site:
-   hoje o Jekyll já insere o header e o footer prontos no HTML
-   através do {% include %} em _layouts/default.html.
+/* ==========================================================
+   SITE SCRIPTS (DAVI MELO)
+   - Frase aleatória no cabeçalho
+   - Embaralhamento e fade-in da galeria da Home
+   - Carregamento infinito fluido (Archive) sem layout thrashing
+   - Lightbox para desktop com atalhos de teclado e pré-carregamento
+========================================================== */
 
-   Esse fetch antigo sempre falhava (a URL não existe mais) e
-   tentava escrever dentro de elementos #site-header/#site-footer
-   que também não existem — ou seja, gerava erro no console em
-   todas as páginas E, como a função carregarFraseHeader() só
-   era chamada dentro desse fetch quebrado, a frase aleatória do
-   topo nunca era exibida de verdade. Removido o fetch; a frase
-   agora é sorteada assim que a página carrega (ver o final desta
-   seção).
-========================= */
-
+/* ----------------------------------------------------------
+   1. COLEÇÃO DE FRASES DO HEADER
+---------------------------------------------------------- */
 const frases = [
   "There's nothing more precious than time.",
   "Virgil was here.",
@@ -102,181 +94,135 @@ const frases = [
   "From the underground to the underground, since 2017 'til god knows when."
 ];
 
-/* =========================
-   Carregar frase aleatória no header
-========================= */
-
-function carregarFraseHeader() {
+/* ----------------------------------------------------------
+   2. FRASE ALEATÓRIA DO CABEÇALHO
+---------------------------------------------------------- */
+function initFraseHeader() {
   const fraseHeader = document.getElementById("frase-header");
-
-  if (!fraseHeader) {
-    return;
-  }
+  if (!fraseHeader) return;
 
   const indiceAleatorio = Math.floor(Math.random() * frases.length);
-
   fraseHeader.textContent = `"${frases[indiceAleatorio]}"`;
 }
 
-// O header já vem pronto no HTML (inserido pelo Jekyll), então
-// basta esperar o DOM carregar para sortear e exibir a frase.
-document.addEventListener("DOMContentLoaded", carregarFraseHeader);
-
-/* =========================
-   Embaralhar imagens da galeria
-   ---------------------------------------------------------
-   Usado nas galerias com a classe "galeria--random" que já
-   nascem prontas no HTML (ex.: galeria da página inicial).
-   Reordena os elementos <img> existentes assim que a página
-   carrega. Não é usado pela galeria da página Archive, que é
-   montada dinamicamente (ver seção de carregamento infinito).
-========================= */
-
-function embaralharElementos(container) {
-  const itens = Array.from(container.querySelectorAll("img"));
-
-  for (let i = itens.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [itens[i], itens[j]] = [itens[j], itens[i]];
-  }
-
-  itens.forEach((item) => container.appendChild(item));
-}
-
-function embaralharGalerias() {
-  const galerias = document.querySelectorAll(".galeria--random");
-  galerias.forEach((galeria) => embaralharElementos(galeria));
-}
-
-/* Observador compartilhado: a imagem só ganha a classe "aparecer"
-   quando realmente entra na área visível da tela. Usado tanto
-   nas imagens criadas aos poucos na Archive quanto nas que já
-   existem no HTML da página inicial. */
+/* ----------------------------------------------------------
+   3. OBSERVADOR DE FADE-IN COMPARTILHADO
+---------------------------------------------------------- */
 function criarObservadorFade() {
-  const observadorFade = new IntersectionObserver((entradas) => {
+  return new IntersectionObserver((entradas, observer) => {
     entradas.forEach((entrada) => {
       if (entrada.isIntersecting) {
-        requestAnimationFrame(() => {
-          entrada.target.classList.add("aparecer");
-        });
-        observadorFade.unobserve(entrada.target);
+        entrada.target.classList.add("aparecer");
+        observer.unobserve(entrada.target);
       }
     });
   }, {
-    rootMargin: "0px 0px -50px 0px" // Dispara quando a imagem está 50px "dentro" da tela
+    rootMargin: "0px 0px -50px 0px"
   });
-
-  return observadorFade;
 }
 
-function aplicarFadeGaleriaIndex() {
+/* ----------------------------------------------------------
+   4. GALERIA DA HOME (EMBARALHAMENTO E FADE)
+---------------------------------------------------------- */
+function initGaleriaIndex() {
   const galeria = document.querySelector(".galeria--index .galeria");
+  if (!galeria) return;
 
-  if (!galeria) {
-    return;
+  // Embaralha itens existentes no HTML usando DocumentFragment para um único reflow
+  const itens = Array.from(galeria.querySelectorAll("img"));
+  if (itens.length > 1) {
+    for (let i = itens.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [itens[i], itens[j]] = [itens[j], itens[i]];
+    }
+
+    const fragment = document.createDocumentFragment();
+    itens.forEach((item) => fragment.appendChild(item));
+    galeria.appendChild(fragment);
   }
 
+  // Aplica o observador de fade-in
   const observadorFade = criarObservadorFade();
-
-  // Na Archive as imagens só entram no DOM depois de carregar, então já
-  // têm altura real quando o observador as vê. Aqui elas já estão no HTML
-  // (muitas com loading="lazy"): sem altura, todas "cabem" no viewport e
-  // ganhariam "aparecer" de uma vez. Só observamos depois do load.
-  galeria.querySelectorAll("img").forEach((img) => {
-    const observarQuandoPronta = () => observadorFade.observe(img);
-
+  itens.forEach((img) => {
     if (img.complete && img.naturalWidth > 0) {
-      observarQuandoPronta();
+      observadorFade.observe(img);
     } else {
-      img.addEventListener("load", observarQuandoPronta, { once: true });
+      img.addEventListener("load", () => observadorFade.observe(img), { once: true });
+      img.addEventListener("error", () => observadorFade.observe(img), { once: true });
     }
   });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  embaralharGalerias();
-  aplicarFadeGaleriaIndex();
-});
-
-/* =========================
-   SCRIPT PARA CARREGAMENTO INFINITO DE IMAGENS (PÁGINA ARCHIVE)
-========================= */
-
-document.addEventListener("DOMContentLoaded", () => {
+/* ----------------------------------------------------------
+   5. GALERIA ARCHIVE (CARREGAMENTO INFINITO OTIMIZADO)
+---------------------------------------------------------- */
+function initGaleriaArchive() {
   const galeria = document.getElementById("galeria");
   const sentinela = document.getElementById("sentinela");
-
   if (!galeria || !sentinela) return;
 
   const totalImagens = 1119;
   const imagens = [];
 
   for (let i = 1; i <= totalImagens; i++) {
-    const numeroFormatado = i.toString().padStart(4, '0');
+    const numeroFormatado = i.toString().padStart(4, "0");
     imagens.push(`/img/archive/arch-${numeroFormatado}.jpg`);
   }
 
+  // Embaralha ordem das imagens
   for (let i = imagens.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [imagens[i], imagens[j]] = [imagens[j], imagens[i]];
   }
 
-  function obterNumeroColunas() {
-    return window.matchMedia("(min-width: 1100px)").matches ? 3 : 1;
-  }
+  const mediaDesktop = window.matchMedia("(min-width: 1100px)");
+  const obterNumeroColunas = () => (mediaDesktop.matches ? 3 : 1);
 
   const colunas = [];
+  const alturasVirtuais = [];
   galeria.classList.add("galeria--colunas");
 
-  function criarColunas(qtd) {
+  const observadorFade = criarObservadorFade();
+
+  function montarColunas(qtd) {
     galeria.innerHTML = "";
     colunas.length = 0;
+    alturasVirtuais.length = 0;
+
     for (let i = 0; i < qtd; i++) {
       const coluna = document.createElement("div");
       coluna.className = "coluna-galeria";
       galeria.appendChild(coluna);
       colunas.push(coluna);
+      alturasVirtuais.push(0);
     }
   }
 
-  const observadorFade = criarObservadorFade();
+  montarColunas(obterNumeroColunas());
 
-  criarColunas(obterNumeroColunas());
-
-  let indiceAtual = 0;
-  const quantidadePorVez = 30;
-  let carregando = false;
-
-  function indiceColunaMaisCurta() {
+  // Encontra a coluna mais baixa em memória, evitando leitura de offsetHeight síncrona
+  function obterIndiceColunaMaisCurta() {
     let indiceMenor = 0;
-    let menorAltura = colunas[0].offsetHeight;
+    let menorAltura = alturasVirtuais[0];
 
-    for (let j = 1; j < colunas.length; j++) {
-      if (colunas[j].offsetHeight < menorAltura) {
-        menorAltura = colunas[j].offsetHeight;
+    for (let j = 1; j < alturasVirtuais.length; j++) {
+      if (alturasVirtuais[j] < menorAltura) {
+        menorAltura = alturasVirtuais[j];
         indiceMenor = j;
       }
     }
-
-    // Se as alturas forem iguais (comum no início ou imagens ainda não renderizadas),
-    // escolhemos a coluna que tem menos elementos dentro.
-    if (colunas.every(c => c.offsetHeight === menorAltura)) {
-      let minItens = colunas[0].children.length;
-      indiceMenor = 0;
-      for (let j = 1; j < colunas.length; j++) {
-        if (colunas[j].children.length < minItens) {
-          minItens = colunas[j].children.length;
-          indiceMenor = j;
-        }
-      }
-    }
-
     return indiceMenor;
   }
 
   function encaixarImagem(img, animar = true) {
-    const indice = indiceColunaMaisCurta();
+    const indice = obterIndiceColunaMaisCurta();
     colunas[indice].appendChild(img);
+
+    // Atualiza a altura estimada da coluna em memória com base no aspect ratio
+    const aspect = img.naturalWidth && img.naturalHeight
+      ? (img.naturalHeight / img.naturalWidth)
+      : 1.33;
+    alturasVirtuais[indice] += aspect * 300 + 20;
 
     if (animar) {
       observadorFade.observe(img);
@@ -285,20 +231,27 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  let indiceAtual = 0;
+  const quantidadePorLeva = 30;
+  let carregando = false;
+
   function carregarMaisImagens() {
     if (carregando || indiceAtual >= imagens.length) return;
     carregando = true;
 
-    const limite = Math.min(indiceAtual + quantidadePorVez, imagens.length);
-    let processadasNestaLeva = 0;
+    const limite = Math.min(indiceAtual + quantidadePorLeva, imagens.length);
+    let processadas = 0;
     const totalDestaLeva = limite - indiceAtual;
 
-    const verificarFimDaLeva = () => {
-      processadasNestaLeva++;
-      if (processadasNestaLeva >= totalDestaLeva) {
+    const aoFinalizarLeva = () => {
+      processadas++;
+      if (processadas >= totalDestaLeva) {
         carregando = false;
-        // Verifica se o sentinela ainda está visível (ex: telas 4k)
-        setTimeout(checarProximidadeSentinela, 300);
+        // Se a tela for muito grande e o sentinela ainda estiver visível, carrega mais uma leva
+        const rect = sentinela.getBoundingClientRect();
+        if (rect.top <= window.innerHeight + 800) {
+          requestAnimationFrame(carregarMaisImagens);
+        }
       }
     };
 
@@ -307,45 +260,34 @@ document.addEventListener("DOMContentLoaded", () => {
       img.alt = "Imagem de arquivo";
       img.dataset.index = String(i);
       img.decoding = "async";
-      
+
       const fonte = imagens[i];
 
-      const aoFinalizar = () => {
-        if (img.dataset.carregada === "true") return;
-        img.dataset.carregada = "true";
+      const aoCarregarOuErro = () => {
+        if (img.dataset.processada === "true") return;
+        img.dataset.processada = "true";
         encaixarImagem(img);
-        verificarFimDaLeva();
+        aoFinalizarLeva();
       };
 
-      const aoFalhar = () => {
-        if (img.dataset.carregada === "true") return;
-        img.dataset.carregada = "true";
-        console.warn("Não foi possível carregar:", fonte);
-        verificarFimDaLeva();
+      img.onload = aoCarregarOuErro;
+      img.onerror = () => {
+        console.warn("Imagem não encontrada:", fonte);
+        aoCarregarOuErro();
       };
 
-      img.onload = aoFinalizar;
-      img.onerror = aoFalhar;
       img.src = fonte;
 
-      // Se já estiver no cache
       if (img.complete && img.naturalWidth > 0) {
-        aoFinalizar();
+        aoCarregarOuErro();
       }
     }
 
     indiceAtual = limite;
   }
 
-  function checarProximidadeSentinela() {
-    if (carregando || indiceAtual >= imagens.length) return;
-    const rect = sentinela.getBoundingClientRect();
-    if (rect.top <= window.innerHeight + 800) {
-      carregarMaisImagens();
-    }
-  }
-
-  const observador = new IntersectionObserver((entradas) => {
+  // Observador exclusivo para o sentinela: dispensa listeners pesados no window scroll
+  const observadorSentinela = new IntersectionObserver((entradas) => {
     entradas.forEach((entrada) => {
       if (entrada.isIntersecting) {
         carregarMaisImagens();
@@ -355,47 +297,41 @@ document.addEventListener("DOMContentLoaded", () => {
     rootMargin: "800px"
   });
 
-  observador.observe(sentinela);
-  window.addEventListener("scroll", checarProximidadeSentinela, { passive: true });
+  observadorSentinela.observe(sentinela);
 
-  window.addEventListener("resize", () => {
+  // Escuta alteração do breakpoint através de matchMedia (dispara apenas ao trocar desktop/mobile)
+  mediaDesktop.addEventListener("change", () => {
     const qtdDesejada = obterNumeroColunas();
     if (qtdDesejada !== colunas.length) {
       const todasImagens = Array.from(galeria.querySelectorAll("img")).sort((a, b) => {
         return Number(a.dataset.index) - Number(b.dataset.index);
       });
-      criarColunas(qtdDesejada);
+      montarColunas(qtdDesejada);
       todasImagens.forEach((img) => encaixarImagem(img, false));
     }
   });
 
+  // Primeira leva inicial
   carregarMaisImagens();
-});
+}
 
-/* =========================
-   LIGHTBOX PARA AMPLIAR IMAGENS DA GALERIA (APENAS DESKTOP)
-   ---------------------------------------------------------
-   Cria o modal de lightbox uma única vez e usa delegação de
-   eventos (clique no documento) para funcionar tanto com as
-   imagens que já existem na página quanto com as que são
-   adicionadas depois pelo infinite scroll do Archive.
-   Desativado em telas <= 1100px (ver style.css).
-========================= */
+/* ----------------------------------------------------------
+   6. LIGHTBOX PARA DESKTOP COM CONTROLE ACESSÍVEL
+---------------------------------------------------------- */
+function initLightbox() {
+  if (!document.querySelector(".galeria")) return;
 
-document.addEventListener("DOMContentLoaded", () => {
-  // Cria a estrutura HTML do Lightbox dinamicamente
   const lightboxHTML = `
-    <div class="lightbox-overlay" id="lightbox">
-      <button class="lightbox-botao lightbox-fechar">&times;</button>
-      <button class="lightbox-botao lightbox-anterior">&#10094;</button>
+    <div class="lightbox-overlay" id="lightbox" role="dialog" aria-modal="true" aria-label="Visualizador de Imagem">
+      <button class="lightbox-botao lightbox-fechar" aria-label="Fechar lightbox">&times;</button>
+      <button class="lightbox-botao lightbox-anterior" aria-label="Imagem anterior">&#10094;</button>
       <div class="lightbox-conteudo">
         <img src="" alt="Imagem ampliada">
       </div>
-      <button class="lightbox-botao lightbox-proxima">&#10095;</button>
+      <button class="lightbox-botao lightbox-proxima" aria-label="Próxima imagem">&#10095;</button>
     </div>
   `;
-
-  document.body.insertAdjacentHTML('beforeend', lightboxHTML);
+  document.body.insertAdjacentHTML("beforeend", lightboxHTML);
 
   const lightbox = document.getElementById("lightbox");
   const lightboxImg = lightbox.querySelector(".lightbox-conteudo img");
@@ -406,46 +342,30 @@ document.addEventListener("DOMContentLoaded", () => {
   let imagensGaleria = [];
   let indiceAtual = 0;
 
-  // Usa delegação de eventos no documento para pegar imagens atuais e futuras (infinite scroll)
-  document.addEventListener("click", (e) => {
-    // Se a tela for menor ou igual a 1100px (Mobile/Tablet), o Lightbox não é acionado
-    if (window.innerWidth <= 1100) return;
-
-    if (e.target.tagName === "IMG" && e.target.closest(".galeria")) {
-      const imgClicada = e.target;
-      const galeriaPai = imgClicada.closest(".galeria");
-
-      // Pega todas as imagens daquela galeria e ordena pela posição
-      // original (data-index). Isso é necessário porque, na página
-      // Archive, as imagens agora ficam agrupadas por coluna no HTML
-      // (ver seção de carregamento infinito) e não na ordem
-      // sequencial de carregamento. Em galerias sem data-index (ex.:
-      // a da home), o sort não altera nada, então a ordem visual
-      // original é mantida normalmente.
-      imagensGaleria = Array.from(galeriaPai.querySelectorAll("img")).sort((a, b) => {
-        const indexA = a.dataset.index !== undefined ? Number(a.dataset.index) : 0;
-        const indexB = b.dataset.index !== undefined ? Number(b.dataset.index) : 0;
-        return indexA - indexB;
-      });
-      indiceAtual = imagensGaleria.indexOf(imgClicada);
-
-      if (indiceAtual !== -1) {
-        atualizarImagemLightbox();
-        lightbox.classList.add("ativo");
-        document.body.style.overflow = "hidden"; // Trava a rolagem da página de fundo
-      }
+  function precarregarProxima(indice) {
+    if (imagensGaleria.length === 0) return;
+    const prox = (indice + 1) % imagensGaleria.length;
+    const ant = (indice - 1 + imagensGaleria.length) % imagensGaleria.length;
+    if (imagensGaleria[prox]) {
+      const imgProx = new Image();
+      imgProx.src = imagensGaleria[prox].src;
     }
-  });
+    if (imagensGaleria[ant]) {
+      const imgAnt = new Image();
+      imgAnt.src = imagensGaleria[ant].src;
+    }
+  }
 
   function atualizarImagemLightbox() {
     if (imagensGaleria.length > 0 && imagensGaleria[indiceAtual]) {
       lightboxImg.src = imagensGaleria[indiceAtual].src;
+      precarregarProxima(indiceAtual);
     }
   }
 
   function fecharLightbox() {
     lightbox.classList.remove("ativo");
-    document.body.style.overflow = "auto"; // Libera a rolagem
+    document.body.style.overflow = "";
   }
 
   function proximaImagem(e) {
@@ -462,19 +382,40 @@ document.addEventListener("DOMContentLoaded", () => {
     atualizarImagemLightbox();
   }
 
-  // Eventos de clique nos botões
+  // Delegação de clique para imagens de qualquer galeria
+  document.addEventListener("click", (e) => {
+    if (window.innerWidth < 1100) return;
+
+    if (e.target.tagName === "IMG" && e.target.closest(".galeria")) {
+      const imgClicada = e.target;
+      const galeriaPai = imgClicada.closest(".galeria");
+
+      const lista = Array.from(galeriaPai.querySelectorAll("img"));
+      // Ordena por data-index somente se a galeria tiver esse atributo (Archive)
+      if (lista.length > 0 && lista[0].dataset.index !== undefined) {
+        imagensGaleria = lista.sort((a, b) => Number(a.dataset.index) - Number(b.dataset.index));
+      } else {
+        imagensGaleria = lista;
+      }
+
+      indiceAtual = imagensGaleria.indexOf(imgClicada);
+
+      if (indiceAtual !== -1) {
+        atualizarImagemLightbox();
+        lightbox.classList.add("ativo");
+        document.body.style.overflow = "hidden";
+      }
+    }
+  });
+
   btnFechar.addEventListener("click", fecharLightbox);
   btnProxima.addEventListener("click", proximaImagem);
   btnAnterior.addEventListener("click", imagemAnterior);
 
-  // Fechar ao clicar fora da imagem (no fundo escuro)
   lightbox.addEventListener("click", (e) => {
-    if (e.target === lightbox) {
-      fecharLightbox();
-    }
+    if (e.target === lightbox) fecharLightbox();
   });
 
-  // Navegação por teclado (Setas esquerda/direita e ESC para fechar)
   document.addEventListener("keydown", (e) => {
     if (!lightbox.classList.contains("ativo")) return;
 
@@ -482,4 +423,14 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.key === "ArrowRight") proximaImagem();
     if (e.key === "ArrowLeft") imagemAnterior();
   });
+}
+
+/* ----------------------------------------------------------
+   7. INICIALIZAÇÃO UNIFICADA
+---------------------------------------------------------- */
+document.addEventListener("DOMContentLoaded", () => {
+  initFraseHeader();
+  initGaleriaIndex();
+  initGaleriaArchive();
+  initLightbox();
 });

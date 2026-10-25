@@ -1,6 +1,6 @@
-/* =========================
-   VARIÁVEIS GERAIS
-========================= */
+/* ==========================================================
+   VARIÁVEIS DE DESIGN SYSTEM & TEMA
+========================================================== */
 :root {
   --bg-page: #030303;
   --text-color: #ffffff;
@@ -16,56 +16,64 @@
   --frase-margem-inferior: 20px;
 }
 
-/* =========================
-   RESETS E BASE
-========================= */
+/* ==========================================================
+   RESET & ESTILOS BASE
+========================================================== */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
   padding: 0;
-  background: var(--bg-page);
+  background-color: var(--bg-page);
   color: var(--text-color);
   font-family: var(--font-family);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 h1, h2, h3, h4, h5, h6 {
   margin: 0;
   padding: 0;
+  font-weight: 700;
 }
 
 p {
   line-height: 1.5;
+  margin-top: 0;
   margin-bottom: 0;
 }
 
-a:link,
-a:visited,
-a:active {
+a {
   color: var(--link-color);
   text-decoration: none;
+  transition: color 0.15s ease;
 }
 
 a:hover {
   color: var(--link-hover-color);
-  text-decoration: none;
 }
 
 img {
-  width: 100%;
+  max-width: 100%;
   height: auto;
   display: block;
-  margin: 20px 0; /* Aplica 20px no topo e na base, 0 nas laterais */
 }
 
-/* =========================
-   ESTRUTURA PRINCIPAL
-========================= */
+/* ==========================================================
+   ESTRUTURA PRINCIPAL & LAYOUT
+========================================================== */
 .container {
   width: 100%;
   max-width: 1100px;
   min-height: 100vh;
   margin: 0 auto;
   padding: 30px;
-  box-sizing: border-box;
   background-color: var(--bg-container);
   border-left: 2px solid var(--container-border);
   border-right: 2px solid var(--container-border);
@@ -75,6 +83,7 @@ img {
   width: 100%;
   max-width: 750px;
   height: auto;
+  aspect-ratio: 5 / 1;
   display: block;
   margin: 0 auto 5px;
 }
@@ -84,25 +93,42 @@ img {
   color: var(--frase-cor);
   font-size: var(--frase-tamanho);
   line-height: var(--frase-espacamento-linhas);
+  min-height: calc(var(--frase-tamanho) * var(--frase-espacamento-linhas));
   font-style: italic;
   text-align: center;
 }
 
-/* =========================
-   COMPONENTES (BLOG E EMBEDS)
-========================= */
+/* Menu de navegação da Home */
+.menu-principal {
+  margin-bottom: 20px;
+}
+
+/* ==========================================================
+   BLOG & CONTEÚDO DE POSTS
+========================================================== */
 .postagem-blog h1 {
   margin-bottom: 10px;
 }
 
-/* OBS: esta classe não está sendo usada em nenhum HTML no momento -
-   o layout de post (post.html) aplica a data com um "style" embutido
-   direto no HTML em vez desta classe. Mantida aqui caso vocês queiram
-   trocar aquele "style" embutido por esta classe no futuro. */
 .data-post {
-  margin-top: 0;
-  margin-bottom: 40px;
+  font-size: 0.8rem;
+  opacity: 0.6;
+  margin-top: -10px;
+  margin-bottom: 30px;
   color: #888888;
+}
+
+.conteudo-post {
+  line-height: 1.6;
+}
+
+.conteudo-post p {
+  margin-bottom: 1rem;
+}
+
+.conteudo-post img:not(.galeria img) {
+  width: 100%;
+  margin: 20px 0;
 }
 
 .yt-embed {
@@ -111,18 +137,10 @@ img {
   border: 0;
 }
 
-/* =========================
+/* ==========================================================
    GALERIA E COLUNAS
-   ---------------------------------------------------------
-   "column-count" cria o efeito de mosaico (tipo Pinterest) para
-   galerias com um conjunto fixo de imagens já prontas no HTML
-   (ex.: a galeria da home). Ele não deve ser usado em galerias
-   que recebem imagens NOVAS aos poucos (como o infinite scroll
-   da página Archive), porque o navegador reequilibra a altura
-   de todas as colunas sempre que um item é adicionado - fazendo
-   as imagens que já estavam na tela mudarem de lugar. Para esse
-   caso, veja o bloco ".galeria--colunas" logo abaixo.
-========================= */
+========================================================== */
+/* Galeria estática / mosaico padrão */
 .galeria {
   column-count: 2;
   column-gap: 20px;
@@ -139,16 +157,14 @@ img {
   page-break-inside: avoid;
 }
 
-/* Galeria com carregamento infinito (usada em #galeria, página
-   Archive). As colunas aqui são <div class="coluna-galeria">
-   reais, criadas pelo script.js - cada nova imagem é encaixada
-   no final da coluna mais curta, sem afetar as que já existem.
-   Como o seletor usa o ID (#galeria), ele já tem prioridade
-   sobre o "column-count" da classe ".galeria" acima, em
-   qualquer tamanho de tela. */
+.conteudo-post .galeria img {
+  margin: 0 0 20px 0;
+}
+
+/* Galeria com carregamento dinâmico (Archive) */
 #galeria.galeria--colunas {
   display: flex;
-  column-count: unset; /* anula o mosaic de .galeria para esta página */
+  column-count: unset;
   align-items: flex-start;
   gap: 20px;
 }
@@ -158,28 +174,148 @@ img {
   flex-direction: column;
   gap: 20px;
   flex: 1;
-  min-width: 0; /* evita que uma imagem grande estoure a largura da coluna */
+  min-width: 0;
 }
 
 #galeria.galeria--colunas img {
-  margin: 0; /* o espaçamento já vem do "gap" das colunas acima */
+  margin: 0;
 }
 
-/* =========================
-   RESPONSIVIDADE (MEDIA QUERIES)
-========================= */
+/* ==========================================================
+   ANIMAÇÕES DE FADE-IN & TRANSIÇÃO DE IMAGENS
+========================================================== */
+#galeria.galeria--colunas img,
+.galeria--index .galeria img {
+  opacity: 0;
+  transform: translateY(15px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
 
-/* Dispositivos móveis (Telas Menores) */
-@media (max-width: 1100px) {
-  .galeria {
-    column-count: 1;
-  }
+#galeria.galeria--colunas img.aparecer,
+.galeria--index .galeria img.aparecer {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ==========================================================
+   LIGHTBOX (AMPLIAÇÃO DE IMAGEM)
+========================================================== */
+.lightbox-overlay {
+  display: none;
+}
+
+/* ==========================================================
+   TABELAS & ELEMENTOS AUXILIARES
+========================================================== */
+table {
+  width: auto;
+  border-collapse: collapse;
+  margin: 30px 0;
+  font-size: 15px;
+}
+
+th, td {
+  border: 1px solid var(--container-border);
+  padding: 12px 20px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+th {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--link-color);
+}
+
+.botao-voltar {
+  display: inline-block;
+  margin-bottom: 20px;
+  letter-spacing: 1px;
+}
+
+.voltar-topo {
+  margin-top: 60px;
+  margin-bottom: 20px;
+}
+
+#sentinela {
+  height: 20px;
+  width: 100%;
+}
+
+footer {
+  margin-top: 30px;
+}
+
+/* ==========================================================
+   PÁGINA ABOUT (SOBRE MIM)
+========================================================== */
+.pagina-about h1 {
+  margin-bottom: 25px;
+  letter-spacing: 0.5px;
+}
+
+.about-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: start;
+}
+
+.about-coluna-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.about-coluna-texto p {
+  color: #dddddd;
+  line-height: 1.7;
+  font-size: 1.05rem;
+}
+
+.about-coluna-foto {
+  width: 100%;
+}
+
+.about-foto {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  margin: 0;
+  border-radius: 4px;
+  border: 1px solid var(--container-border);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  display: block;
+}
+
+/* ==========================================================
+   RESPONSIVIDADE (MEDIA QUERIES SEM CONFLITO DE BREAKPOINT)
+========================================================== */
+
+/* Dispositivos móveis e tablets (< 1100px) */
+@media (max-width: 1099.98px) {
   .container {
     padding: 10px;
   }
+
+  .galeria {
+    column-count: 1;
+  }
+
+  .about-container {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+
+  .about-coluna-foto {
+    order: -1;
+    width: 100%;
+    margin: 0;
+  }
 }
 
-/* Desktop e Telas Largas (1100px ou mais) */
+/* Desktop e Telas Largas (>= 1100px) */
 @media (min-width: 1100px) {
   .container--wide-desktop {
     max-width: 1500px;
@@ -194,69 +330,12 @@ img {
   .galeria--index .galeria {
     column-count: 1;
   }
-}
 
-/* =========================
-   BOTÃO VOLTAR (POSTS)
-========================= */
-.botao-voltar {
-  display: inline-block;
-  margin-bottom: 20px; /* Empurra o título do post para baixo */
-  letter-spacing: 1px;
-}
-
-/* =========================
-   BOTÃO VOLTAR PARA O TOPO
-========================= */
-.voltar-topo {
-  margin-top: 60px;
-  margin-bottom: 20px;
-}
-
-/* =========================
-   LIGHTBOX (APENAS DESKTOP - 1100px ou mais)
-========================= */
-.lightbox-overlay {
-  display: none;
-}
-
-.lightbox-botao {
-  position: absolute;
-  background: none;
-  border: none;
-  color: #ffffff;
-  font-size: 40px;
-  cursor: pointer;
-  padding: 20px;
-  user-select: none;
-  transition: color 0.2s ease;
-  z-index: 10000;
-}
-
-.lightbox-botao:hover {
-  color: var(--link-color);
-}
-
-.lightbox-anterior {
-  left: 20px;
-}
-
-.lightbox-proxima {
-  right: 20px;
-}
-
-.lightbox-fechar {
-  position: absolute;
-  top: 20px;
-  right: 30px;
-  font-size: 35px;
-}
-
-@media (min-width: 1100px) {
   .galeria img {
     cursor: zoom-in;
   }
 
+  /* Lightbox ativo */
   .lightbox-overlay {
     position: fixed;
     z-index: 9999;
@@ -286,70 +365,54 @@ img {
   .lightbox-conteudo img {
     max-width: 90vw;
     max-height: 85vh;
-    width: auto !important;
-    height: auto !important;
+    width: auto;
+    height: auto;
     object-fit: contain;
-    margin: 0 !important;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-  }
-}
-
-/* =========================
-   ESTILO PARA TABELAS
-========================= */
-table {
-  width: auto; /* Faz a tabela se ajustar ao conteúdo */
-  border-collapse: collapse;
-  margin: 30px 0;
-  font-size: 15px;
-}
-
-th, td {
-  border: 1px solid var(--container-border);
-  padding: 12px 20px;
-  text-align: left;
-  white-space: nowrap; /* Mantém o texto alinhado sem quebrar linha à força */
-}
-
-th {
-  background-color: rgba(255, 255, 255, 0.05);
-  color: var(--link-color);
-}
-
-/* =========================
-   ANIMAÇÃO DE FADE IN
-   ---------------------------------------------------------
-   Imagens começam invisíveis e só ganham a classe "aparecer"
-   quando entram na tela (IntersectionObserver em script.js).
-   Usada na galeria da Archive (colunas) e na da página inicial
-   (uma coluna). O layout de cada página continua definido
-   pelos blocos de galeria acima.
-========================= */
-#galeria.galeria--colunas img,
-.galeria--index .galeria img {
-  opacity: 0;
-  transform: translateY(15px); /* Dá um leve efeito da imagem subindo */
-  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-  will-change: opacity, transform;
-}
-
-#galeria.galeria--colunas img.aparecer,
-.galeria--index .galeria img.aparecer {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* =========================
-   EFEITO P&B NO HOVER (ARCHIVE - APENAS DESKTOP)
-========================= */
-@media (min-width: 1100px) and (hover: hover) and (pointer: fine) {
-  #galeria.galeria--colunas img {
-    filter: grayscale(0%);
-    transition: opacity 0.6s ease-out, transform 0.6s ease-out, filter 0.15s ease-in-out;
-    will-change: opacity, transform, filter;
+    margin: 0;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
   }
 
-  #galeria.galeria--colunas img:hover {
-    filter: grayscale(100%);
+  .lightbox-botao {
+    position: absolute;
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 40px;
+    cursor: pointer;
+    padding: 20px;
+    user-select: none;
+    transition: color 0.2s ease;
+    z-index: 10000;
+  }
+
+  .lightbox-botao:hover {
+    color: var(--link-color);
+  }
+
+  .lightbox-anterior {
+    left: 20px;
+  }
+
+  .lightbox-proxima {
+    right: 20px;
+  }
+
+  .lightbox-fechar {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    font-size: 35px;
+  }
+
+  /* Efeito P&B no Hover no Archive Desktop */
+  @media (hover: hover) and (pointer: fine) {
+    #galeria.galeria--colunas img {
+      filter: grayscale(0%);
+      transition: opacity 0.5s ease-out, transform 0.5s ease-out, filter 0.15s ease-in-out;
+    }
+
+    #galeria.galeria--colunas img:hover {
+      filter: grayscale(100%);
+    }
   }
 }
