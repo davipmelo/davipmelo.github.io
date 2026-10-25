@@ -154,7 +154,128 @@ function initGaleriaIndex() {
 }
 
 /* ----------------------------------------------------------
-   5. GALERIA ARCHIVE (CARREGAMENTO INFINITO OTIMIZADO)
+   5. FUNÇÕES UNIVERSAIS DE NIVELAMENTO DE GALERIAS MULTI-COLUNA
+---------------------------------------------------------- */
+function limparNivelamento(galeriaEl) {
+  if (!galeriaEl) return;
+  const equalizadas = galeriaEl.querySelectorAll("img[data-equalizada='true']");
+  equalizadas.forEach((img) => {
+    img.style.removeProperty("height");
+    img.style.removeProperty("min-height");
+    img.style.removeProperty("max-height");
+    img.style.removeProperty("object-fit");
+    img.style.removeProperty("object-position");
+    delete img.dataset.equalizada;
+  });
+}
+
+function nivelarGaleria(galeriaEl) {
+  if (!galeriaEl) return;
+  const colunas = Array.from(galeriaEl.querySelectorAll(":scope > .coluna-galeria"));
+  if (colunas.length <= 1) return;
+
+  limparNivelamento(galeriaEl);
+
+  const alturas = colunas.map((col) => col.offsetHeight);
+  const alturaMaxima = Math.max(...alturas);
+  if (alturaMaxima <= 0) return;
+
+  colunas.forEach((col, i) => {
+    const diff = alturaMaxima - alturas[i];
+    if (diff > 1) {
+      const ultimaImg = col.lastElementChild;
+      if (ultimaImg && ultimaImg.tagName === "IMG") {
+        const alturaAtual = ultimaImg.offsetHeight;
+        const novaAltura = Math.round(alturaAtual + diff);
+        ultimaImg.style.setProperty("height", `${novaAltura}px`, "important");
+        ultimaImg.style.setProperty("min-height", `${novaAltura}px`, "important");
+        ultimaImg.style.setProperty("max-height", `${novaAltura}px`, "important");
+        ultimaImg.style.setProperty("object-fit", "cover", "important");
+        ultimaImg.style.setProperty("object-position", "center", "important");
+        ultimaImg.dataset.equalizada = "true";
+      }
+    }
+  });
+}
+
+function nivelarTodasAsGalerias() {
+  document.querySelectorAll(".galeria.galeria--colunas").forEach(nivelarGaleria);
+}
+
+/* ----------------------------------------------------------
+   6. GALERIAS ESTÁTICAS MULTI-COLUNA (BLOG POSTS / PÁGINAS)
+---------------------------------------------------------- */
+function initGaleriasEstaticas() {
+  const galerias = Array.from(document.querySelectorAll(".galeria:not(#galeria)"));
+  if (galerias.length === 0) return;
+
+  const mediaDesktop = window.matchMedia("(min-width: 1100px)");
+  const observadorFade = criarObservadorFade();
+
+  galerias.forEach((galeria) => {
+    // A galeria da Home (.galeria--index) é propositalmente 1 coluna
+    if (galeria.closest(".galeria--index")) return;
+
+    const imagens = Array.from(galeria.querySelectorAll("img"));
+    if (imagens.length <= 1) return;
+
+    galeria.classList.add("galeria--colunas");
+
+    const obterQtdColunas = () => (mediaDesktop.matches ? 2 : 1);
+
+    function organizarColunas() {
+      const qtdColunas = obterQtdColunas();
+      galeria.innerHTML = "";
+      const colunas = [];
+      const alturas = [];
+
+      for (let i = 0; i < qtdColunas; i++) {
+        const col = document.createElement("div");
+        col.className = "coluna-galeria";
+        galeria.appendChild(col);
+        colunas.push(col);
+        alturas.push(0);
+      }
+
+      imagens.forEach((img) => {
+        let menorIndice = 0;
+        let menorAltura = alturas[0];
+        for (let j = 1; j < alturas.length; j++) {
+          if (alturas[j] < menorAltura) {
+            menorAltura = alturas[j];
+            menorIndice = j;
+          }
+        }
+
+        colunas[menorIndice].appendChild(img);
+
+        const aspect = img.naturalWidth && img.naturalHeight
+          ? (img.naturalHeight / img.naturalWidth)
+          : 1.33;
+        alturas[menorIndice] += aspect * 350 + 20;
+
+        if (img.complete && img.naturalWidth > 0) {
+          observadorFade.observe(img);
+        } else {
+          img.addEventListener("load", () => {
+            observadorFade.observe(img);
+            requestAnimationFrame(() => nivelarGaleria(galeria));
+          }, { once: true });
+        }
+      });
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => nivelarGaleria(galeria));
+      });
+    }
+
+    organizarColunas();
+    mediaDesktop.addEventListener("change", organizarColunas);
+  });
+}
+
+/* ----------------------------------------------------------
+   7. GALERIA ARCHIVE (CARREGAMENTO INFINITO OTIMIZADO)
 ---------------------------------------------------------- */
 function initGaleriaArchive() {
   const galeria = document.getElementById("galeria");
@@ -216,13 +337,26 @@ function initGaleriaArchive() {
 
   function encaixarImagem(img, animar = true) {
     const indice = obterIndiceColunaMaisCurta();
+
+    // Se a coluna já possuía uma imagem equalizada na ponta, restaura sua altura natural
+    const ultimoFilho = colunas[indice].lastElementChild;
+    if (ultimoFilho && ultimoFilho.dataset.equalizada === "true") {
+      ultimoFilho.style.removeProperty("height");
+      ultimoFilho.style.removeProperty("min-height");
+      ultimoFilho.style.removeProperty("max-height");
+      ultimoFilho.style.removeProperty("object-fit");
+      ultimoFilho.style.removeProperty("object-position");
+      delete ultimoFilho.dataset.equalizada;
+    }
+
     colunas[indice].appendChild(img);
 
-    // Atualiza a altura estimada da coluna em memória com base no aspect ratio
+    // Atualiza a altura estimada da coluna em memória com base no aspect ratio real
     const aspect = img.naturalWidth && img.naturalHeight
       ? (img.naturalHeight / img.naturalWidth)
       : 1.33;
-    alturasVirtuais[indice] += aspect * 300 + 20;
+    const larguraColuna = colunas[0]?.offsetWidth || 350;
+    alturasVirtuais[indice] += aspect * larguraColuna + 20;
 
     if (animar) {
       observadorFade.observe(img);
@@ -247,9 +381,15 @@ function initGaleriaArchive() {
       processadas++;
       if (processadas >= totalDestaLeva) {
         carregando = false;
-        // Se a tela for muito grande e o sentinela ainda estiver visível, carrega mais uma leva
+
+        // SEMPRE executa o nivelamento após o carregamento da leva
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => nivelarGaleria(galeria));
+        });
+
+        // Se a tela for muito grande e o sentinela ainda estiver visível na carga inicial
         const rect = sentinela.getBoundingClientRect();
-        if (rect.top <= window.innerHeight + 800) {
+        if (rect.top <= window.innerHeight + 800 && indiceAtual < imagens.length) {
           requestAnimationFrame(carregarMaisImagens);
         }
       }
@@ -303,11 +443,15 @@ function initGaleriaArchive() {
   mediaDesktop.addEventListener("change", () => {
     const qtdDesejada = obterNumeroColunas();
     if (qtdDesejada !== colunas.length) {
+      limparNivelamento(galeria);
       const todasImagens = Array.from(galeria.querySelectorAll("img")).sort((a, b) => {
         return Number(a.dataset.index) - Number(b.dataset.index);
       });
       montarColunas(qtdDesejada);
       todasImagens.forEach((img) => encaixarImagem(img, false));
+      if (qtdDesejada > 1) {
+        requestAnimationFrame(() => requestAnimationFrame(() => nivelarGaleria(galeria)));
+      }
     }
   });
 
@@ -316,7 +460,7 @@ function initGaleriaArchive() {
 }
 
 /* ----------------------------------------------------------
-   6. LIGHTBOX PARA DESKTOP COM CONTROLE ACESSÍVEL
+   8. LIGHTBOX PARA DESKTOP COM CONTROLE ACESSÍVEL
 ---------------------------------------------------------- */
 function initLightbox() {
   if (!document.querySelector(".galeria")) return;
@@ -426,11 +570,26 @@ function initLightbox() {
 }
 
 /* ----------------------------------------------------------
-   7. INICIALIZAÇÃO UNIFICADA
+   9. LISTENER GLOBAL DE REDIMENSIONAMENTO E SCROLL
+---------------------------------------------------------- */
+let scrollResizeTimer;
+const dispararNivelamentoGeral = () => {
+  clearTimeout(scrollResizeTimer);
+  scrollResizeTimer = setTimeout(() => {
+    requestAnimationFrame(nivelarTodasAsGalerias);
+  }, 120);
+};
+
+window.addEventListener("scroll", dispararNivelamentoGeral, { passive: true });
+window.addEventListener("resize", dispararNivelamentoGeral);
+
+/* ----------------------------------------------------------
+   10. INICIALIZAÇÃO UNIFICADA
 ---------------------------------------------------------- */
 document.addEventListener("DOMContentLoaded", () => {
   initFraseHeader();
   initGaleriaIndex();
+  initGaleriasEstaticas();
   initGaleriaArchive();
   initLightbox();
 });

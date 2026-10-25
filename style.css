@@ -161,15 +161,15 @@ img {
   margin: 0 0 20px 0;
 }
 
-/* Galeria com carregamento dinâmico (Archive) */
-#galeria.galeria--colunas {
+/* Galeria em colunas flexíveis (Archive, Posts ou qualquer galeria multi-coluna) */
+.galeria.galeria--colunas {
   display: flex;
   column-count: unset;
   align-items: flex-start;
   gap: 20px;
 }
 
-#galeria.galeria--colunas .coluna-galeria {
+.galeria.galeria--colunas .coluna-galeria {
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -177,21 +177,28 @@ img {
   min-width: 0;
 }
 
-#galeria.galeria--colunas img {
+.galeria.galeria--colunas img {
+  width: 100%;
+  display: block;
   margin: 0;
+}
+
+.galeria.galeria--colunas img[data-equalizada="true"] {
+  object-fit: cover !important;
+  object-position: center !important;
 }
 
 /* ==========================================================
    ANIMAÇÕES DE FADE-IN & TRANSIÇÃO DE IMAGENS
-========================================================== */
-#galeria.galeria--colunas img,
+========================================================= */
+.galeria.galeria--colunas img,
 .galeria--index .galeria img {
   opacity: 0;
   transform: translateY(15px);
   transition: opacity 0.5s ease-out, transform 0.5s ease-out;
 }
 
-#galeria.galeria--colunas img.aparecer,
+.galeria.galeria--colunas img.aparecer,
 .galeria--index .galeria img.aparecer {
   opacity: 1;
   transform: translateY(0);
