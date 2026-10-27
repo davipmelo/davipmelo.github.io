@@ -90,6 +90,8 @@ const frases = [
   "Far Horizons playing softly in the background.",
   "There's no place better than Gludio.",
   "Heart of the cards, guide me!",
+  "Life is moving, can't you see?",
+  "New person, same old mistakes.",
   "Design the room, not the candle.",
   "This is my own private domicile and I will not be harassed... bitch!",
   "I miss the 2017 SK Gaming.",
